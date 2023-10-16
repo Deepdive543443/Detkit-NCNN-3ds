@@ -25,7 +25,9 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 width, u16 height)
 {
     u16 *img_16 = (u16*) img;
     int cstep = mat.cstep;
+    float *mat_ptr;
 
+    
 
     // printf("w: %d, h: %d, c: %d, cstep: %d\n", mat.w, mat.h, mat.c, mat.cstep);
     // printf("Element size: %d\n", mat.elemsize);
@@ -35,11 +37,11 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 width, u16 height)
         {
             // if (i > 3 && j > 3) continue;
 
-            float *mat_ptr = mat.row(j);
+            mat_ptr = mat.row(j);
             // Read and decompress the data from buffer
             int draw_y = height - j;
 			int draw_x = i;
-			u32 v = (draw_y + draw_x * height) * 3;
+			// u32 v = (draw_y + draw_x * height) * 3;
 			u16 data = img_16[j * width + i];
 
             uint8_t b = ((data >> 11) & 0x1F) << 3;

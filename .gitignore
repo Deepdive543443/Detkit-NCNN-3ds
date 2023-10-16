@@ -7,3 +7,5 @@ build/main.d
 build/main.o
 build/nanodet_3ds.lst
 build/nanodet_3ds.map
+build/vision.o
+build/vision.d

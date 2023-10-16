@@ -56,6 +56,7 @@ void hang(const char *message, void* buf)
 
         if (kDown & KEY_X)
         {
+            // ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);

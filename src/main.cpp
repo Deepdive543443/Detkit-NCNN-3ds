@@ -271,7 +271,7 @@ int main(int argc, char** argv)
     CAMU_StopCapture(PORT_CAM1);
 
     // Close camera event handles
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 2; i++)
     {
         if (camReceiveEvent[i] != 0) 
         {

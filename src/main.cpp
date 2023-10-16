@@ -1,13 +1,13 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <malloc.h>
+// #include <stdio.h>
+// #include <string.h>
+// #include <stdlib.h>
+// #include <malloc.h>
 #include <setjmp.h>
 #include <iostream>
-#include <sys/dirent.h>
-#include <sys/errno.h>
-#include <sys/unistd.h>
-#include <stdbool.h>
+// #include <sys/dirent.h>
+// #include <sys/errno.h>
+// #include <sys/unistd.h>
+// #include <stdbool.h>
 
 #include "3ds.h"
 
@@ -60,6 +60,8 @@ void hang(const char *message, void* buf)
             ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+
+
             cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
             cv::imwrite("sdmc:/image/test_img.png", image_ocv);

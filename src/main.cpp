@@ -12,6 +12,7 @@
 #include "3ds.h"
 
 #include "net.h"
+#include "simpleocv.h"
 
 #include "vision.h"
 
@@ -39,7 +40,7 @@ void cleanup() {
 	acExit();
 }
 
-void hang(const char *message, u8* buf) 
+void hang(const char *message, void* buf) 
 {
 	// clearScreen();
 	printf("%s", message);
@@ -49,12 +50,19 @@ void hang(const char *message, u8* buf)
     {
         hidScanInput();
 
-        u32 kHeld = hidKeysHeld();
-        if (kHeld & KEY_A) break;
+        u32 kDown = hidKeysDown();
+        
+        if (kDown & KEY_A) break;
 
-        if (kHeld & KEY_X)
+        if (kDown & KEY_X)
         {
-            printf("Saving");
+            ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
+            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
+            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+            cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
+            image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR2RGB);
+            cv::imwrite("sdmc:/image/test_img.png", image_ocv);
+            printf("Save image\n");
         }
     }
 }
@@ -93,7 +101,7 @@ int main(int argc, char** argv)
     CAMU_SetTrimming(PORT_CAM1, false);
     // CAMU_SetTrimming(PORT_CAM2, false); // I don't think we need second camera here
 
-    u8 *buf = (u8 *) malloc(SCREEN_SIZE_TOP * 2);
+    void *buf = malloc(SCREEN_SIZE_TOP * 2);
 	if(!buf) {
 		hang("Failed to allocate memory!", buf);
 	}

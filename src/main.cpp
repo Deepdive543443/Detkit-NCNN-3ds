@@ -105,9 +105,10 @@ int main(int argc, char** argv)
     // CAMU_SetTrimming(PORT_CAM2, false); // I don't think we need second camera here
 
     void *buf = malloc(SCREEN_SIZE_TOP * 2);
-	if(!buf) {
-		hang("Failed to allocate memory!", buf);
-	}
+    if(!buf)
+    {
+        hang("Failed to allocate memory!", buf);
+    }
 
     u32 bufSize;
     CAMU_GetMaxBytes(&bufSize, WIDTH_TOP, HEIGHT_TOP);

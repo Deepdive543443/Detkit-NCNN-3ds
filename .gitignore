@@ -1,0 +1,9 @@
+nanodet_3ds.3dsx
+nanodet_3ds.elf
+nanodet_3ds.lst
+nanodet_3ds.smdh
+.vscode/settings.json
+build/main.d
+build/main.o
+build/nanodet_3ds.lst
+build/nanodet_3ds.map

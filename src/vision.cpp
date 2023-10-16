@@ -33,14 +33,9 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 width, u16 height)
     {
         for (int i = 0; i < width; i++)
         {
-            uint8_t b = ((img_16[0] >> 11) & 0x1F) << 3;
-			uint8_t g = ((img_16[0] >> 5) & 0x3F) << 2;
-			uint8_t r = (img_16[0] & 0x1F) << 3;
-
-            // write data in float type
-            mat_ptr[0] =  (float) r; // R
-            mat_ptr[cstep] =  (float) g; // G
-            mat_ptr[cstep * 2] = (float) b; // B
+            mat_ptr[0] = (float) ((img_16[0] & 0x1F) << 3);
+            mat_ptr[cstep] = (float) (((img_16[0] >> 5) & 0x3F) << 2);
+            mat_ptr[cstep * 2] = (float) (((img_16[0] >> 11) & 0x1F) << 3);
 
             img_16++;
             mat_ptr++;

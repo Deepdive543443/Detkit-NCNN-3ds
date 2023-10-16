@@ -61,7 +61,7 @@ void hang(const char *message, void* buf)
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
             cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
-            image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR2RGB);
+            image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
             cv::imwrite("sdmc:/image/test_img.png", image_ocv);
             printf("Save image\n");
         }

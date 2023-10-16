@@ -1,20 +1,12 @@
-// #include <stdio.h>
-// #include <string.h>
-// #include <stdlib.h>
-// #include <malloc.h>
 #include <setjmp.h>
-#include <iostream>
-// #include <sys/dirent.h>
-// #include <sys/errno.h>
-// #include <sys/unistd.h>
-// #include <stdbool.h>
+#include <iostream> // std
 
-#include "3ds.h"
+#include "3ds.h" // 3ds devkit 
 
 #include "net.h"
-#include "simpleocv.h"
+#include "simpleocv.h" // ncnn
 
-#include "vision.h"
+#include "vision.h" // utils
 
 #define WAIT_TIMEOUT 1000000000ULL
 
@@ -29,15 +21,17 @@
 
 static jmp_buf exitJmp;
 
-inline void clearScreen(void) {
-	u8 *frame = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-	memset(frame, 0, 320 * 240 * 3);
+inline void clearScreen(void)
+{
+    u8 *frame = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+    memset(frame, 0, 320 * 240 * 3);
 }
 
-void cleanup() {
-	camExit();
-	gfxExit();
-	acExit();
+void cleanup() 
+{
+    camExit();
+    gfxExit();
+    acExit();
 }
 
 void hang(const char *message, void* buf) 
@@ -72,7 +66,7 @@ void hang(const char *message, void* buf)
 
 int main(int argc, char** argv)
 {
-    // Lof of Camera initial stuff copy from video example
+    // Loads of Camera initial stuff copy from video example
     // Initializations
     acInit();
     gfxInitDefault();
@@ -83,7 +77,8 @@ int main(int argc, char** argv)
     gfxSetDoubleBuffering(GFX_BOTTOM, false);
 
     // Save current stack frame for easy exit
-    if(setjmp(exitJmp)) {
+    if(setjmp(exitJmp)) 
+    {
         cleanup();
         return 0;
     }
@@ -135,22 +130,6 @@ int main(int argc, char** argv)
     gfxFlushBuffers();
     gspWaitForVBlank();
     gfxSwapBuffers();
-
-    // // printf("\nUse slider to enable/disable 3D\n"); // Add we surely don't need 3D here
-    // printf("Press Start to exit to Homebrew Launcher\n");
-
-    // // Initialize services
-    // gfxInitDefault();
-
-    // //In this example we need one PrintConsole for each screen
-    // PrintConsole topScreen, bottomScreen;
-
-    // //Initialize console for both screen using the two different PrintConsole we have defined
-    // consoleInit(GFX_TOP, &topScreen);
-    // consoleInit(GFX_BOTTOM, &bottomScreen);
-
-    // // Initialize top screen
-    // consoleSelect(&topScreen);
 
     u32 kDown;
     u32 kHeld;

@@ -29,10 +29,9 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 width, u16 height)
     int cstep = mat.cstep;
     float *mat_ptr = (float *) mat.data;
 
-    int i, j, draw_x, draw_y;
-    for (j = 0; j < height; j++)
+    for (int j = 0; j < height; j++)
     {
-        for (i = 0; i < width; i++)
+        for (int i = 0; i < width; i++)
         {
             uint8_t b = ((img_16[0] >> 11) & 0x1F) << 3;
 			uint8_t g = ((img_16[0] >> 5) & 0x3F) << 2;

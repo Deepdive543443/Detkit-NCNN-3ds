@@ -40,16 +40,24 @@ void cleanup() {
 }
 
 void hang(const char *message) {
-	clearScreen();
+	// clearScreen();
 	printf("%s", message);
-	printf("Press start to exit");
+	// printf("Press start to exit");
 
-	while (aptMainLoop()) {
-		hidScanInput();
+    while (1)
+    {
+        hidScanInput();
 
-		u32 kHeld = hidKeysHeld();
-		if (kHeld & KEY_START) longjmp(exitJmp, 1);
-	}
+        u32 kHeld = hidKeysHeld();
+        if (kHeld & KEY_A) break;
+    }
+
+	// while (aptMainLoop()) {
+	// 	hidScanInput();
+
+	// 	u32 kHeld = hidKeysHeld();
+	// 	if (kHeld & KEY_A) longjmp(exitJmp, 1);
+	// }
 }
 
 int main(int argc, char** argv)
@@ -96,7 +104,7 @@ int main(int argc, char** argv)
     CAMU_SetTransferBytes(PORT_CAM1, bufSize, WIDTH_TOP, HEIGHT_TOP);
     // CAMU_SetTransferBytes(PORT_BOTH, bufSize, WIDTH_TOP, HEIGHT_TOP);
 
-    CAMU_Activate(SELECT_OUT1_OUT2);
+    CAMU_Activate(SELECT_OUT1);
     // CAMU_Activate(SELECT_OUT1_OUT2);
 
     Handle camReceiveEvent[2] = {0};
@@ -158,6 +166,11 @@ int main(int argc, char** argv)
             if (kDown & KEY_START)
             {
                 break;
+            }
+
+            if (kDown & KEY_R)
+            {
+                hang("Capturing...\n");
             }
         }
 
@@ -255,7 +268,7 @@ int main(int argc, char** argv)
     }
 
     // Stop camera, release allocated memory
-    CAMU_StopCapture(PORT_BOTH);
+    CAMU_StopCapture(PORT_CAM1);
 
     // Close camera event handles
     for (int i = 0; i < 4; i++)

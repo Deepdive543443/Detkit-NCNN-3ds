@@ -4,7 +4,6 @@
 #include <malloc.h>
 #include <setjmp.h>
 #include <iostream>
-// #include <3ds.h>
 #include <sys/dirent.h>
 #include <sys/errno.h>
 #include <sys/unistd.h>
@@ -12,6 +11,7 @@
 
 #include "3ds.h"
 
+#include "net.h"
 
 #include "vision.h"
 
@@ -39,7 +39,8 @@ void cleanup() {
 	acExit();
 }
 
-void hang(const char *message) {
+void hang(const char *message, u8* buf) 
+{
 	// clearScreen();
 	printf("%s", message);
 	// printf("Press start to exit");
@@ -50,14 +51,12 @@ void hang(const char *message) {
 
         u32 kHeld = hidKeysHeld();
         if (kHeld & KEY_A) break;
+
+        if (kHeld & KEY_X)
+        {
+            printf("Saving");
+        }
     }
-
-	// while (aptMainLoop()) {
-	// 	hidScanInput();
-
-	// 	u32 kHeld = hidKeysHeld();
-	// 	if (kHeld & KEY_A) longjmp(exitJmp, 1);
-	// }
 }
 
 int main(int argc, char** argv)
@@ -96,7 +95,7 @@ int main(int argc, char** argv)
 
     u8 *buf = (u8 *) malloc(SCREEN_SIZE_TOP * 2);
 	if(!buf) {
-		hang("Failed to allocate memory!");
+		hang("Failed to allocate memory!", buf);
 	}
 
     u32 bufSize;
@@ -170,7 +169,7 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_R)
             {
-                hang("Capturing...\n");
+                hang("Capturing...\n", buf);
             }
         }
 

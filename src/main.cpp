@@ -7,6 +7,7 @@
 #include "simpleocv.h" // ncnn
 
 #include "vision.h" // utils
+#include "nanodet.h"
 
 #define WAIT_TIMEOUT 1000000000ULL
 
@@ -34,7 +35,19 @@ void cleanup()
     acExit();
 }
 
-void hang(const char *message, void* buf) 
+void hang_err(const char *message)
+{
+    printf("%s\nPress START to exit\n", message);
+    while (aptMainLoop())
+    {
+        hidScanInput();
+        u32 kDown = hidKeysDown();
+
+        if (kDown & KEY_START) break;
+    }
+}
+
+void hang(const char *message, void* buf, Nanodet &nanodet) 
 {
 	// clearScreen();
 	printf("%s", message);
@@ -43,7 +56,6 @@ void hang(const char *message, void* buf)
     while (1)
     {
         hidScanInput();
-
         u32 kDown = hidKeysDown();
         
         if (kDown & KEY_A) break;
@@ -60,6 +72,13 @@ void hang(const char *message, void* buf)
             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
             cv::imwrite("sdmc:/image/test_img.png", image_ocv);
             printf("Save image\n");
+        }
+
+        if(kDown & KEY_Y)
+        {
+            ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
+            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
+            nanodet.forward(image);
         }
     }
 }
@@ -102,7 +121,7 @@ int main(int argc, char** argv)
     void *buf = malloc(SCREEN_SIZE_TOP * 2);
     if(!buf)
     {
-        hang("Failed to allocate memory!", buf);
+        hang_err("Failed to allocate memory!");
     }
 
     u32 bufSize;
@@ -134,15 +153,39 @@ int main(int argc, char** argv)
     u32 kDown;
     u32 kHeld;
 
+    // Initialize nanodet
+    ncnn::Option opt;
+    opt.lightmode = true;
+    opt.num_threads = 1;
+    opt.use_winograd_convolution = true;
+    opt.use_sgemm_convolution = true;
+    opt.use_int8_inference = true;
+    opt.use_vulkan_compute = false;
+    opt.use_fp16_packed = true;
+    opt.use_fp16_storage = true;
+    opt.use_fp16_arithmetic = true;
+    opt.use_int8_storage = true;
+    opt.use_int8_arithmetic = true;
+    opt.use_packing_layout = true;
+    opt.use_shader_pack8 = false;
+    opt.use_image_storage = false;
+
+    Nanodet nanodet;
+
+    // Result rc = romfsInit();
+    // if (rc)
+    //     printf("romfsInit: %08lX\n", rc);
+
+    // else
+    // {
+    //     nanodet.create("romfs:/models/nanodet-m.param", "romfs:/models/nanodet-m.bin", opt);
+    //     printf("romfs Init Successful!\n");
+    // }
+
+    nanodet.create("models/nanodet-m.param", "models/nanodet-m.bin", opt);
+
     std::cout << "Hello Nano" << std::endl;
     std::cout << std::to_string(bufSize) << std::endl;
-
-    // Buffer allocating stuff
-
-
-    // Loads of Camera initialization stuff
-
-
     
     while (aptMainLoop())
     {
@@ -160,7 +203,7 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_R)
             {
-                hang("Capturing...\n", buf);
+                hang("Capturing...\n", buf, nanodet);
             }
         }
 
@@ -204,38 +247,6 @@ int main(int argc, char** argv)
 
         }
 
-        // svcWaitSynchronizationN(&index, camReceiveEvent, 4, false, WAIT_TIMEOUT);
-        // switch (index) {
-        // case 0:
-        //     // printf("svcCloseHandle: 0x%08X\n", (unsigned int) svcCloseHandle(camReceiveEvent[2]));
-        //     svcCloseHandle(camReceiveEvent[2]);
-        //     camReceiveEvent[2] = 0;
-
-        //     captureInterrupted = true;
-        //     continue; //skip screen update
-        //     break;
-        // case 1:
-        //     svcCloseHandle(camReceiveEvent[3]);
-        //     camReceiveEvent[3] = 0;
-
-        //     captureInterrupted = true;
-        //     continue; //skip screen update
-        //     break;
-        // case 2:
-        //     // printf("svcCloseHandle: 0x%08X\n", (unsigned int) svcCloseHandle(camReceiveEvent[2]));
-        //     svcCloseHandle(camReceiveEvent[2]);
-        //     camReceiveEvent[2] = 0;
-        //     break;
-        // case 3:
-        //     svcCloseHandle(camReceiveEvent[3]);
-        //     camReceiveEvent[3] = 0;
-        //     break;
-        //     default:
-        //     break;
-        // }
-
-        // Decompress and display the image on top left screen 
-
         gfxSet3D(false);
         writePictureToFramebufferRGB565(
             gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 
@@ -250,11 +261,6 @@ int main(int argc, char** argv)
         gfxFlushBuffers();
         gspWaitForVBlank();
         gfxSwapBuffers();
-
-
-        // When pressed, Copy a frame into simpleocv
-    
-        // save image
     }
 
     // Stop camera, release allocated memory

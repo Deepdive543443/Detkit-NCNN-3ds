@@ -9,3 +9,5 @@ build/nanodet_3ds.lst
 build/nanodet_3ds.map
 build/vision.o
 build/vision.d
+build/nanodet.o
+build/nanodet.d

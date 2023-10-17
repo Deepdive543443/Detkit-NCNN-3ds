@@ -6,8 +6,8 @@
 #include "net.h"
 #include "simpleocv.h" // ncnn
 
-#include "vision.h" // utils
-#include "nanodet.h"
+#include "vision.h" 
+#include "nanodet.h"// utils
 
 #define WAIT_TIMEOUT 1000000000ULL
 
@@ -19,14 +19,7 @@
 #define HEIGHT_BOTTOM  240
 #define SCREEN_SIZE_BOTTOM  WIDTH_BOTTOM  * HEIGHT_BOTTOM 
 
-
 static jmp_buf exitJmp;
-
-inline void clearScreen(void)
-{
-    u8 *frame = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-    memset(frame, 0, 320 * 240 * 3);
-}
 
 void cleanup() 
 {
@@ -58,7 +51,7 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
         hidScanInput();
         u32 kDown = hidKeysDown();
         
-        if (kDown & KEY_A) break;
+        if (kDown & KEY_B) break;
 
         if (kDown & KEY_X)
         {
@@ -78,7 +71,7 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
         {
             ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
-            nanodet.forward(image);
+            nanodet.forward_test(image);
         }
     }
 }
@@ -172,6 +165,7 @@ int main(int argc, char** argv)
 
     Nanodet nanodet;
 
+    // Rom file system pattern
     // Result rc = romfsInit();
     // if (rc)
     //     printf("romfsInit: %08lX\n", rc);
@@ -182,7 +176,11 @@ int main(int argc, char** argv)
     //     printf("romfs Init Successful!\n");
     // }
 
-    nanodet.create("models/nanodet-m.param", "models/nanodet-m.bin", opt);
+    // if (nanodet.create("models/nanodet-ELite0_320.param", "models/nanodet-ELite0_320.bin", opt))
+    if (nanodet.create("models/nanodet-m.param", "models/nanodet-m.bin", opt))
+    {
+        hang_err("Failed loading nanodet");
+    }
 
     std::cout << "Hello Nano" << std::endl;
     std::cout << std::to_string(bufSize) << std::endl;

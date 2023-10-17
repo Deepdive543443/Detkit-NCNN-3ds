@@ -176,8 +176,7 @@ int main(int argc, char** argv)
     //     printf("romfs Init Successful!\n");
     // }
 
-    // if (nanodet.create("models/nanodet-ELite0_320.param", "models/nanodet-ELite0_320.bin", opt))
-    if (nanodet.create("models/nanodet-m.param", "models/nanodet-m.bin", opt))
+    if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
     {
         hang_err("Failed loading nanodet");
     }

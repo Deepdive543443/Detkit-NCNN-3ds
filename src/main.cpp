@@ -86,7 +86,7 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if(kDown & KEY_Y)
         {
-            ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
+            ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
             nanodet.forward_test(image);
         }

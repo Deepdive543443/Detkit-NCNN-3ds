@@ -53,17 +53,46 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
         
         if (kDown & KEY_B) break;
 
-        if (kDown & KEY_X)
+        if (kDown & KEY_A)
         {
-            // ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
             writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
 
+            cv::Mat image_ocv(image.h * 2, image.w * 2, 3);
 
+            // Method 1
+            // ncnn::Mat img_resize(HEIGHT_TOP / 2, WIDTH_TOP / 2, 3);
+            // ncnn::resize_bilinear_c3((unsigned char *) image.data, image.w, image.h, (unsigned char *) img_resize.data, WIDTH_TOP / 2, HEIGHT_TOP / 2);
+            // img_resize.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
+
+            // Method 2
+            image.to_pixels_resize(image_ocv.data, ncnn::Mat::PIXEL_BGR, image.w * 2, image.h * 2);
+
+            // Method 3
+            // ncnn::resize_bilinear(image, image, WIDTH_TOP * 2, HEIGHT_TOP * 2);
+            
+            cv::imwrite("test_image/test_img_resized.png", image_ocv);
+            printf("Save image resized\n");
+            printf("Yes  w: %d, h: %d\n", image_ocv.cols, image_ocv.rows);
+            printf("Mat  w: %d, h: %d\n", image.w, image.h);
+        }
+
+        if (kDown & KEY_X)
+        {
+            // ncnn::Mat image(HEIGHT_TOP, WIDTH_TOP, 3);
+
+            ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
+            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
+            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+            
             cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
-            cv::imwrite("sdmc:/image/test_img.png", image_ocv);
+
+            // cv::imwrite("sdmc:/image/test_img.png", image_ocv);
+            cv::imwrite("test_image/test_img.png", image_ocv);
+
+            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
             printf("Save image\n");
         }
 

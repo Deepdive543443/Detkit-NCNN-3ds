@@ -11,3 +11,5 @@ build/vision.o
 build/vision.d
 build/nanodet.o
 build/nanodet.d
+test_img_resized.png
+test_img.png

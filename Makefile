@@ -48,7 +48,7 @@ GFXBUILD	:=	$(BUILD)
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 # ----------------ncnn--------------------
-NCNN_DIR := /home/justinfung/ncnn_3ds_new # <-Switch to your own path to build yours
+NCNN_DIR := /home/justinfung/ncnn_3ds # <-Switch to your own path to build yours
 NCNN_LIB_FLAG := $(foreach dir,$(NCNN_DIR),-L$(dir)/lib)
 NCNN_INCLUDE_FLAG := $(foreach dir,$(NCNN_DIR),-I$(dir)/include/ncnn)
 

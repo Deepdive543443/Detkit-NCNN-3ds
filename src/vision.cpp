@@ -26,20 +26,22 @@ void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 widt
 void writePictureToMat(ncnn::Mat &mat, void *img, u16 width, u16 height)
 {
     u16 *img_16 = (u16 *) img;
-    float *mat_ptr = (float *) mat.data;
-
+    float *mat_ptr;
+    u16 data;
     int cstep = mat.cstep;
 
     for (int j = 0; j < height; j++)
     {
+        mat_ptr = mat.row(j);
         for (int i = 0; i < width; i++)
         {
-            mat_ptr[0] = (float) ((img_16[0] & 0x1F) << 3);
-            mat_ptr[cstep] = (float) (((img_16[0] >> 5) & 0x3F) << 2);
-            mat_ptr[cstep * 2] = (float) (((img_16[0] >> 11) & 0x1F) << 3);
+            data = img_16[j * width + i];
+            
+            mat_ptr[0] = (float) ((data & 0x1F) << 3);
+            mat_ptr[cstep] = (float) (((data >> 5) & 0x3F) << 2);
+            mat_ptr[cstep * 2] = (float) (((data >> 11) & 0x1F) << 3);
 
-            img_16++;
-            mat_ptr++;
+            mat_ptr++;            
         }
     }
 }

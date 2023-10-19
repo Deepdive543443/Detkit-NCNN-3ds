@@ -65,7 +65,6 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     printf("Resized w: %d h: %d\n", resized.w, resized.h);
     printf("dst w: %d h: %d\n", dst.w, dst.h);
 
-    int first_row = 20;
     float *dst_ptr = (float *) dst.data;
     float *resized_src_ptr = (float *) resized.data;
 
@@ -75,7 +74,7 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     memset(dst_ptr, 0.f, w * w * 3);
     for (int c=0; c<3; c++)
     {
-        dst_ptr = dst.row(first_row) + (c * dst_cstep);
+        dst_ptr = dst.row(80) + (c * dst_cstep);
         resized_src_ptr = resized.row(0) + (c * src_cstep);
         for (int j = 0; j < h; j++)
         {

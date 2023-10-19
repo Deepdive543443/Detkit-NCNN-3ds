@@ -16,7 +16,7 @@ int Nanodet::create(const char* param, const char* bin, const ncnn::Option &opt)
     return 0;
 }
 
-void Nanodet::forward_test(ncnn::Mat &input)
+void Nanodet::inference_test(ncnn::Mat &input)
 {
     const std::vector<const char*>& input_names = nanodet.input_names();
     const std::vector<const char*>& output_names = nanodet.output_names();

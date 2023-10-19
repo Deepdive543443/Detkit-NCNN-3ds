@@ -15,7 +15,7 @@ class Nanodet
     public:
         // Nanodet(const char* param, const char* bin, const ncnn::Option &opt);
         virtual int create(const char* param, const char* bin, const ncnn::Option &opt);
-        virtual void forward_test(ncnn::Mat &input);
+        virtual void inference_test(ncnn::Mat &input);
         virtual void detect(const char* image);
 };
 

@@ -116,9 +116,15 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
         {
             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
             // writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-            ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
-            writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
-            nanodet.forward_test(image);
+            ncnn::Mat resized(320, 320, 3);
+            {
+                ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+                writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+                bordered_resize(image, resized, 320);
+            }
+            // ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
+            // writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
+            nanodet.inference_test(resized);
         }
     }
 }

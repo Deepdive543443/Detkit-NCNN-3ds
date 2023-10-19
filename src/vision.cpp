@@ -87,10 +87,23 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, objec
     {
         const BoxInfo& bbox = bboxes[i];
         // printf("%f %f %f %f %d %f\n",bbox.x1, bbox.x2, bbox.y1, bbox.y2, bbox.label, bbox.score);
-        int x1 = (int) bbox.x1;
-        int y1 = (int) bbox.y1;
-        int w = (int) bbox.x2 - x1;
-        int h = (int) bbox.y2 - y1;
+        // int x1 = (int) bbox.x1;
+        // int y1 = (int) bbox.y1;
+        // int w = (int) bbox.x2 - x1;
+        // int h = (int) bbox.y2 - y1;
+        float x1 = bbox.x1;
+        float y1 = bbox.y1;
+        float w = (bbox.x2 - x1);
+        float h = (bbox.y2 - y1);
+        x1 -= 80;
+        y1 -= 80;
+        x1 *= 1.25;
+        y1 *= 1.25;
+        w *= 1.25;
+        h *= 1.25;
+
+
+
         uint8_t *rgba = (uint8_t *) malloc(4);
         
         // int rgb[3] = {color_list[bbox.label]};
@@ -102,7 +115,7 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, objec
 
         printf("===========\n");
         printf("%s %f\n", class_names[bbox.label], bbox.score);
-        printf("%d %d %d %d\n",(int) bbox.x1, (int) bbox.y1, (int) bbox.x2, (int) bbox.y2);
+        printf("%d %d %d %d\n",(int) x1, (int) y1, (int) w, (int) h);
         printf("===========\n");
 
         int *color = (int *) rgba;
@@ -111,10 +124,10 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, objec
             image.data,
             image.cols,
             image.rows,
-            x1,
-            y1,
-            w,
-            h,
+            (int) x1,
+            (int) y1,
+            (int) w,
+            (int) h,
             color[0], 
             3
         );

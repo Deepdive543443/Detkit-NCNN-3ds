@@ -114,7 +114,8 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if(kDown & KEY_Y)
         {
-            cv::Mat image_output(320, 320, 3);
+            // cv::Mat image_output(320, 320, 3);
+            cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
             std::vector<BoxInfo> bboxes;
             object_rect effect_roi;
         
@@ -125,12 +126,13 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 bordered_resize(image, resized, 320);
-                resized.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+                image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+                // resized.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                 printf("Detecting\n");
                 bboxes = nanodet.detect(resized);
             }
-
+            // draw_bboxes(image_output, bboxes, effect_roi);
             draw_bboxes(image_output, bboxes, effect_roi);
             cv::imwrite("test_image/results.png", image_output);
             printf("Finished\n");

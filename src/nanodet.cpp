@@ -128,10 +128,6 @@ std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
     // Prediction
     ncnn::Mat out;
     ex.extract("output", out);
-    printf("out_shape: C: %d H: %d W: %d\n\n",out.c, out.h, out.w);
-    printf("Number of points: %d\n", center_priors.size());
-    printf("Number of results: %d\n", results.size());
-
     decode(out, center_priors, 0.4, results);
 
     std::vector<BoxInfo> dets;

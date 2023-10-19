@@ -79,26 +79,9 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
             }
         }
     }
-
-    // for (int j = 0; j < h; j++)
-    // {
-    //     dst_ptr = dst.row(j + first_row);
-    //     resized_src_ptr = resized.row(j);
-    //     for (int i = 0; i < w; i++)
-    //     {
-    //         for (int c = 0; c < 3; c++)
-    //         {
-    //             dst_ptr[c * dst_cstep] = resized_src_ptr[c * src_cstep];
-    //         }   
-    //     }
-    //     dst_ptr++;
-    //     resized_src_ptr++;
-    // }
-
-    // memcpy(dst_ptr, resized_src_ptr, w * h * 3);
 }
 
-void draw_bboxes(const cv::Mat& bgr, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
+void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
 {
     static const char* class_names[] = { "person", "bicycle", "car", "motorcycle", "airplane", "bus",
                                         "train", "truck", "boat", "traffic light", "fire hydrant",
@@ -116,7 +99,7 @@ void draw_bboxes(const cv::Mat& bgr, const std::vector<BoxInfo>& bboxes, object_
                                         "scissors", "teddy bear", "hair drier", "toothbrush"
     };
 
-    cv::Mat image = bgr.clone();
+    // cv::Mat image = bgr.clone();
     int src_w = image.cols;
     int src_h = image.rows;
     int dst_w = effect_roi.width;
@@ -129,7 +112,10 @@ void draw_bboxes(const cv::Mat& bgr, const std::vector<BoxInfo>& bboxes, object_
     {
         const BoxInfo& bbox = bboxes[i];
         // printf("%f %f %f %f %d %f\n",bbox.x1, bbox.x2, bbox.y1, bbox.y2, bbox.label, bbox.score);
-        printf("%s\n", class_names[bbox.label]);
+        printf("===========\n");
+        printf("%s %f\n", class_names[bbox.label], bbox.score);
+        printf("%d %d %d %d\n",(int) bbox.x1, (int) bbox.y1, (int) bbox.x2, (int) bbox.y2);
+        printf("===========\n");
     }
 
     // cv::imshow("image", image);

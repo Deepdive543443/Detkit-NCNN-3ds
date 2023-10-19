@@ -125,9 +125,15 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 bordered_resize(image, resized, 320);
+                resized.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+
+                printf("Detecting\n");
                 bboxes = nanodet.detect(resized);
             }
+
             draw_bboxes(image_output, bboxes, effect_roi);
+            cv::imwrite("test_image/results.png", image_output);
+            printf("Finished\n");
             // ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
             // writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
             // nanodet.inference_test(resized);

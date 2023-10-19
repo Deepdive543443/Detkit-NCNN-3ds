@@ -83,39 +83,41 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
 
 void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
 {
-    static const char* class_names[] = { "person", "bicycle", "car", "motorcycle", "airplane", "bus",
-                                        "train", "truck", "boat", "traffic light", "fire hydrant",
-                                        "stop sign", "parking meter", "bench", "bird", "cat", "dog",
-                                        "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
-                                        "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
-                                        "skis", "snowboard", "sports ball", "kite", "baseball bat",
-                                        "baseball glove", "skateboard", "surfboard", "tennis racket",
-                                        "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
-                                        "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
-                                        "hot dog", "pizza", "donut", "cake", "chair", "couch",
-                                        "potted plant", "bed", "dining table", "toilet", "tv", "laptop",
-                                        "mouse", "remote", "keyboard", "cell phone", "microwave", "oven",
-                                        "toaster", "sink", "refrigerator", "book", "clock", "vase",
-                                        "scissors", "teddy bear", "hair drier", "toothbrush"
-    };
-
-    // cv::Mat image = bgr.clone();
-    int src_w = image.cols;
-    int src_h = image.rows;
-    int dst_w = effect_roi.width;
-    int dst_h = effect_roi.height;
-    float width_ratio = (float)src_w / (float)dst_w;
-    float height_ratio = (float)src_h / (float)dst_h;
-
-
     for (size_t i = 0; i < bboxes.size(); i++)
     {
         const BoxInfo& bbox = bboxes[i];
         // printf("%f %f %f %f %d %f\n",bbox.x1, bbox.x2, bbox.y1, bbox.y2, bbox.label, bbox.score);
+        int x1 = (int) bbox.x1;
+        int y1 = (int) bbox.y1;
+        int w = (int) bbox.x2 - x1;
+        int h = (int) bbox.y2 - y1;
+        uint8_t *rgba = (uint8_t *) malloc(4);
+        
+        // int rgb[3] = {color_list[bbox.label]};
+        
+        rgba[0] = color_list[bbox.label][0];
+        rgba[1] = color_list[bbox.label][1];
+        rgba[2] = color_list[bbox.label][2];
+        rgba[3] = 255;
+
         printf("===========\n");
         printf("%s %f\n", class_names[bbox.label], bbox.score);
         printf("%d %d %d %d\n",(int) bbox.x1, (int) bbox.y1, (int) bbox.x2, (int) bbox.y2);
         printf("===========\n");
+
+        int *color = (int *) rgba;
+
+        ncnn::draw_rectangle_c3(
+            image.data,
+            image.cols,
+            image.rows,
+            x1,
+            y1,
+            w,
+            h,
+            color[0], 
+            3
+        );
     }
 
     // cv::imshow("image", image);

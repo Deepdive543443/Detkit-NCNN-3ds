@@ -114,19 +114,25 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if(kDown & KEY_Y)
         {
+            cv::Mat image_output(320, 320, 3);
+            std::vector<BoxInfo> bboxes;
+            object_rect effect_roi;
+        
             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
             // writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-            ncnn::Mat resized(320, 320, 3);
             {
+                ncnn::Mat resized(320, 320, 3);
                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 bordered_resize(image, resized, 320);
+                bboxes = nanodet.detect(resized);
             }
+            draw_bboxes(image_output, bboxes, effect_roi);
             // ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
             // writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
             // nanodet.inference_test(resized);
 
-            auto results = nanodet.detect(resized);
+
         }
     }
 }

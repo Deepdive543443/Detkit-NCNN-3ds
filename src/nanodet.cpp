@@ -115,7 +115,7 @@ void Nanodet::inference_test(ncnn::Mat &input)
     printf("=======================\n");
 }
 
-std::vector<std::vector<BoxInfo>> Nanodet::detect(ncnn::Mat &input)
+std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
 {
     std::vector<std::vector<BoxInfo>> results;
     results.resize(num_class);
@@ -133,18 +133,18 @@ std::vector<std::vector<BoxInfo>> Nanodet::detect(ncnn::Mat &input)
     printf("Number of results: %d\n", results.size());
 
     decode(out, center_priors, 0.4, results);
-    // for (CenterPrior cen : center_priors)
-    // {
-    //     printf("===%d===\nx: %d\ny: %d\n", cen.stride, cen.x, cen.y);
-    // }
 
-    // Decode
+    std::vector<BoxInfo> dets;
+    for (int i = 0; i < (int)results.size(); i++)
+    {
+        this->nms(results[i], 0.5);
 
-
-
-
-    printf("feee\n");
-    return results;
+        for (auto box : results[i])
+        {
+            dets.push_back(box);
+        }
+    }
+    return dets;
 }
 
 void Nanodet::decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors, float threshold, std::vector<std::vector<BoxInfo>> &results)
@@ -176,7 +176,6 @@ void Nanodet::decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors,
             const float *bbox_pred = output.row(i) + this->num_class; // Point to the last 32 bytes of box predictions
             BoxInfo boxinfo = disPred2Bbox(bbox_pred, cur_label, score, ctr_x, ctr_y, ctr_stride);
             results[cur_label].push_back(boxinfo);
-            printf("Box: %f %f %f %f %d %f\n", boxinfo.x1, boxinfo.x2, boxinfo.y1, boxinfo.y2, boxinfo.label, boxinfo.score);
         }
     }
 }
@@ -209,4 +208,33 @@ BoxInfo Nanodet::disPred2Bbox(const float *&dfl_det, int label, float score, int
 
     //std::cout << xmin << "," << ymin << "," << xmax << "," << xmax << "," << std::endl;
     return BoxInfo { xmin, ymin, xmax, ymax, score, label };
+}
+
+void Nanodet::nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH)
+{
+    std::sort(input_boxes.begin(), input_boxes.end(), [](BoxInfo a, BoxInfo b) { return a.score > b.score; });
+    std::vector<float> vArea(input_boxes.size());
+    for (int i = 0; i < int(input_boxes.size()); ++i) {
+        vArea[i] = (input_boxes.at(i).x2 - input_boxes.at(i).x1 + 1)
+            * (input_boxes.at(i).y2 - input_boxes.at(i).y1 + 1);
+    }
+    for (int i = 0; i < int(input_boxes.size()); ++i) {
+        for (int j = i + 1; j < int(input_boxes.size());) {
+            float xx1 = (std::max)(input_boxes[i].x1, input_boxes[j].x1);
+            float yy1 = (std::max)(input_boxes[i].y1, input_boxes[j].y1);
+            float xx2 = (std::min)(input_boxes[i].x2, input_boxes[j].x2);
+            float yy2 = (std::min)(input_boxes[i].y2, input_boxes[j].y2);
+            float w = (std::max)(float(0), xx2 - xx1 + 1);
+            float h = (std::max)(float(0), yy2 - yy1 + 1);
+            float inter = w * h;
+            float ovr = inter / (vArea[i] + vArea[j] - inter);
+            if (ovr >= NMS_THRESH) {
+                input_boxes.erase(input_boxes.begin() + j);
+                vArea.erase(vArea.begin() + j);
+            }
+            else {
+                j++;
+            }
+        }
+    }
 }

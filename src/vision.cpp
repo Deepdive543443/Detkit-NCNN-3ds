@@ -51,19 +51,12 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     
     int h = 192;
     ncnn::Mat resized(320, 192, 3);
-
     ncnn::resize_bilinear(
         src, 
         resized, 
         320, 
         192
     );
-
-    printf("w: %d   h: %d\n", w, h);
-
-    printf("src w: %d h: %d\n", src.w, src.h);
-    printf("Resized w: %d h: %d\n", resized.w, resized.h);
-    printf("dst w: %d h: %d\n", dst.w, dst.h);
 
     float *dst_ptr = (float *) dst.data;
     float *resized_src_ptr = (float *) resized.data;
@@ -103,4 +96,41 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     // }
 
     // memcpy(dst_ptr, resized_src_ptr, w * h * 3);
+}
+
+void draw_bboxes(const cv::Mat& bgr, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
+{
+    static const char* class_names[] = { "person", "bicycle", "car", "motorcycle", "airplane", "bus",
+                                        "train", "truck", "boat", "traffic light", "fire hydrant",
+                                        "stop sign", "parking meter", "bench", "bird", "cat", "dog",
+                                        "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
+                                        "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
+                                        "skis", "snowboard", "sports ball", "kite", "baseball bat",
+                                        "baseball glove", "skateboard", "surfboard", "tennis racket",
+                                        "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
+                                        "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
+                                        "hot dog", "pizza", "donut", "cake", "chair", "couch",
+                                        "potted plant", "bed", "dining table", "toilet", "tv", "laptop",
+                                        "mouse", "remote", "keyboard", "cell phone", "microwave", "oven",
+                                        "toaster", "sink", "refrigerator", "book", "clock", "vase",
+                                        "scissors", "teddy bear", "hair drier", "toothbrush"
+    };
+
+    cv::Mat image = bgr.clone();
+    int src_w = image.cols;
+    int src_h = image.rows;
+    int dst_w = effect_roi.width;
+    int dst_h = effect_roi.height;
+    float width_ratio = (float)src_w / (float)dst_w;
+    float height_ratio = (float)src_h / (float)dst_h;
+
+
+    for (size_t i = 0; i < bboxes.size(); i++)
+    {
+        const BoxInfo& bbox = bboxes[i];
+        // printf("%f %f %f %f %d %f\n",bbox.x1, bbox.x2, bbox.y1, bbox.y2, bbox.label, bbox.score);
+        printf("%s\n", class_names[bbox.label]);
+    }
+
+    // cv::imshow("image", image);
 }

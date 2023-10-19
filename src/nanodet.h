@@ -53,6 +53,7 @@ class Nanodet
     virtual void decode(ncnn::Mat& feats, std::vector<CenterPrior>& center_priors, float threshold, std::vector<std::vector<BoxInfo>>& results);
     // generate_grid_center_priors(this->input_size[0], this->input_size[1], this->strides, center_priors);
     virtual BoxInfo disPred2Bbox(const float *&dfl_det, int label, float score, int x, int y, int stride);
+    virtual void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
     // ncnn::Extractor extractor;
     // std::vector<char*>& input_names;
     // std::vector<char*>& output_names;
@@ -61,7 +62,7 @@ class Nanodet
         // Nanodet(const char* param, const char* bin, const ncnn::Option &opt);
         virtual int create(const char* param, const char* bin, const ncnn::Option &opt);
         virtual void inference_test(ncnn::Mat &input);
-        virtual std::vector<std::vector<BoxInfo>> detect(ncnn::Mat &input);
+        virtual std::vector<BoxInfo> detect(ncnn::Mat &input);
 };
 
 #endif // NANODET_H

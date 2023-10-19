@@ -55,26 +55,54 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if (kDown & KEY_A)
         {
-            ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
-            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+            cv::Mat image_ocv(320, 320, 3);
+            
+            {
+                ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+                ncnn::Mat resized(320, 320, 3);
 
-            cv::Mat image_ocv(image.h * 2, image.w * 2, 3);
-            image.to_pixels_resize(image_ocv.data, ncnn::Mat::PIXEL_BGR, image.w * 2, image.h * 2);
+                writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+                printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+
+                bordered_resize(image, resized, 320);
+
+                // cv::Mat image_ocv(image.h * 2, image.w * 2, 3);
+                // image.to_pixels_resize(image_ocv.data, ncnn::Mat::PIXEL_BGR, image.w * 2, image.h * 2);
+                // ncnn::resize_bilinear(
+                //    image, 
+                //    resized, 
+                //    320, 
+                //    320
+                // );
+                // ncnn::resize_bilinear_c3(
+                //     (unsigned char *) image.data,
+                //     WIDTH_TOP, 
+                //     WIDTH_TOP, 
+                //     (unsigned char *) resized.data, 
+                //     320, 
+                //     320
+                // );
+
+                resized.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
+            }
+            
 
             cv::imwrite("test_image/test_img_resized.png", image_ocv);
             printf("Save image resized\n");
             printf("Yes  w: %d, h: %d\n", image_ocv.cols, image_ocv.rows);
-            printf("Mat  w: %d, h: %d\n", image.w, image.h);
         }
 
         if (kDown & KEY_X)
         {
-            ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
-            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
+            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
+            ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
+            cv::Mat image_ocv(WIDTH_TOP, WIDTH_TOP, 3);
+            
+            writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
             
-            cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
+            // cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
 
             // cv::imwrite("sdmc:/image/test_img.png", image_ocv);
@@ -86,8 +114,10 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if(kDown & KEY_Y)
         {
-            ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-            writePictureToMat(image, buf, WIDTH_TOP, HEIGHT_TOP);
+            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+            // writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+            ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
+            writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
             nanodet.forward_test(image);
         }
     }
@@ -161,7 +191,7 @@ int main(int argc, char** argv)
     gfxSwapBuffers();
 
     u32 kDown;
-    u32 kHeld;
+    // u32 kHeld;
 
     // Initialize nanodet
     ncnn::Option opt;

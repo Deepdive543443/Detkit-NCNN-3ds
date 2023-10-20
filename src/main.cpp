@@ -100,27 +100,23 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
         {
             g_blob_pool_allocator.clear();
             g_workspace_pool_allocator.clear();
-            // cv::Mat image_output(320, 320, 3);
+
             cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
             std::vector<BoxInfo> bboxes;
-        
-            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-            // writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+
             {
                 ncnn::Mat resized(320, 320, 3);
                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 bordered_resize(image, resized, 320);
                 image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
-                // resized.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                 printf("Detecting\n");
                 bboxes = nanodet.detect(resized);
             }
-            // draw_bboxes(image_output, bboxes, effect_roi);
+
             draw_bboxes(image_output, bboxes);
-            // writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
-            cv::imwrite("test_image/results.png", image_output);
+            // cv::imwrite("test_image/results.png", image_output);
 
             writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
             gfxFlushBuffers();
@@ -221,6 +217,11 @@ int main(int argc, char** argv)
 
     Nanodet nanodet;
 
+    if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
+    {
+        hang_err("Failed loading nanodet");
+    }
+
     // Rom file system pattern
     // Result rc = romfsInit();
     // if (rc)
@@ -231,11 +232,6 @@ int main(int argc, char** argv)
     //     nanodet.create("romfs:/models/nanodet-m.param", "romfs:/models/nanodet-m.bin", opt);
     //     printf("romfs Init Successful!\n");
     // }
-
-    if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
-    {
-        hang_err("Failed loading nanodet");
-    }
 
     std::cout << "Hello Nano" << std::endl;
     std::cout << std::to_string(bufSize) << std::endl;

@@ -118,16 +118,12 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
     for (size_t i = 0; i < bboxes.size(); i++)
     {
         const BoxInfo& bbox = bboxes[i];
-        // printf("%f %f %f %f %d %f\n",bbox.x1, bbox.x2, bbox.y1, bbox.y2, bbox.label, bbox.score);
-        // int x1 = (int) bbox.x1;
-        // int y1 = (int) bbox.y1;
-        // int w = (int) bbox.x2 - x1;
-        // int h = (int) bbox.y2 - y1;
+
         float x1 = bbox.x1;
         float y1 = bbox.y1;
         float w = (bbox.x2 - x1);
         float h = (bbox.y2 - y1);
-        // x1 -= 80.f;
+
         y1 -= 80.f;
         x1 *= 1.25;
         y1 *= 1.25;
@@ -160,6 +156,4 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
             3
         );
     }
-
-    // cv::imshow("image", image);
 }

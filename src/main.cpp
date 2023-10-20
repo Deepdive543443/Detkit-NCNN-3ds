@@ -20,6 +20,8 @@
 #define SCREEN_SIZE_BOTTOM  WIDTH_BOTTOM  * HEIGHT_BOTTOM 
 
 static jmp_buf exitJmp;
+static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
+static ncnn::PoolAllocator g_workspace_pool_allocator;
 
 void cleanup() 
 {
@@ -66,24 +68,6 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
                 printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
 
                 bordered_resize(image, resized, 320);
-
-                // cv::Mat image_ocv(image.h * 2, image.w * 2, 3);
-                // image.to_pixels_resize(image_ocv.data, ncnn::Mat::PIXEL_BGR, image.w * 2, image.h * 2);
-                // ncnn::resize_bilinear(
-                //    image, 
-                //    resized, 
-                //    320, 
-                //    320
-                // );
-                // ncnn::resize_bilinear_c3(
-                //     (unsigned char *) image.data,
-                //     WIDTH_TOP, 
-                //     WIDTH_TOP, 
-                //     (unsigned char *) resized.data, 
-                //     320, 
-                //     320
-                // );
-
                 resized.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
             }
             
@@ -114,10 +98,11 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
 
         if(kDown & KEY_Y)
         {
+            g_blob_pool_allocator.clear();
+            g_workspace_pool_allocator.clear();
             // cv::Mat image_output(320, 320, 3);
             cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
             std::vector<BoxInfo> bboxes;
-            object_rect effect_roi;
         
             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
             // writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
@@ -133,7 +118,7 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
                 bboxes = nanodet.detect(resized);
             }
             // draw_bboxes(image_output, bboxes, effect_roi);
-            draw_bboxes(image_output, bboxes, effect_roi);
+            draw_bboxes(image_output, bboxes);
             // writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
             cv::imwrite("test_image/results.png", image_output);
 
@@ -143,11 +128,6 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
             gfxSwapBuffers();
 
             printf("Finished\n");
-            // ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
-            // writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
-            // nanodet.inference_test(resized);
-
-
         }
     }
 }
@@ -262,24 +242,6 @@ int main(int argc, char** argv)
     
     while (aptMainLoop())
     {
-        if (!captureInterrupted) 
-        {
-            // Read which buttons are currently pressed or not
-            hidScanInput();
-            kDown = hidKeysDown();
-
-            // If START button is pressed, break loop and quit
-            if (kDown & KEY_START)
-            {
-                break;
-            }
-
-            if (kDown & KEY_R)
-            {
-                hang("Capturing...\n", buf, nanodet);
-            }
-        }
-
         if (camReceiveEvent[1] == 0) 
         {
             // printf("CAMU_SetReceiving: 0x%08X\n", (unsigned int) CAMU_SetReceiving(&camReceiveEvent[2], buf, PORT_CAM1, SCREEN_SIZE, (s16)bufSize));
@@ -334,6 +296,21 @@ int main(int argc, char** argv)
         gfxFlushBuffers();
         gspWaitForVBlank();
         gfxSwapBuffers();
+
+        if (!captureInterrupted) 
+        {
+            // Read which buttons are currently pressed or not
+            hidScanInput();
+            kDown = hidKeysDown();
+
+            // If START button is pressed, break loop and quit
+            if (kDown & KEY_START) break;
+
+            if (kDown & KEY_R)
+            {
+                hang("Capturing...\n", buf, nanodet);
+            }
+        }
     }
 
     // Stop camera, release allocated memory

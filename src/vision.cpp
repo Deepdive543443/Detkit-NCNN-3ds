@@ -57,9 +57,6 @@ void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 he
 {
     u8 *fb_8 = (u8 *) buf;
     u8 *image_ptr = (u8 *) mat.data;
-    int size = mat.rows * mat.cols * mat.c;
-
-    // printf("H:  %d W:  %d C:  %d", mat.rows, mat.cols, mat.c);
 
     int draw_x, draw_y;
     for(int j = 0; j < height; j++) 
@@ -116,7 +113,7 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
 
 
 
-void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
+void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
 {
     for (size_t i = 0; i < bboxes.size(); i++)
     {
@@ -130,18 +127,14 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, objec
         float y1 = bbox.y1;
         float w = (bbox.x2 - x1);
         float h = (bbox.y2 - y1);
-        // x1 -= 80;
-        // y1 -= 80;
+        // x1 -= 80.f;
+        y1 -= 80.f;
         x1 *= 1.25;
         y1 *= 1.25;
         w *= 1.25;
         h *= 1.25;
 
-
-
         uint8_t *rgba = (uint8_t *) malloc(4);
-        
-        // int rgb[3] = {color_list[bbox.label]};
         
         rgba[0] = color_list[bbox.label][0];
         rgba[1] = color_list[bbox.label][1];

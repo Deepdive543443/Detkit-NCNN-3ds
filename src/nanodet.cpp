@@ -31,24 +31,6 @@ int activation_function_softmax(const float *src, float *dst, int length)
     return 0;
 }
 
-// template<typename _Tp>
-// int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
-// {
-//     const _Tp alpha = *std::max_element(src, src + length);
-//     _Tp denominator{ 0 };
-
-//     for (int i = 0; i < length; ++i) {
-//         dst[i] = fast_exp(src[i] - alpha);
-//         denominator += dst[i];
-//     }
-
-//     for (int i = 0; i < length; ++i) {
-//         dst[i] /= denominator;
-//     }
-
-//     return 0;
-// }
-
 static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors)
 {
     for (int i = 0; i < (int)strides.size(); i++)

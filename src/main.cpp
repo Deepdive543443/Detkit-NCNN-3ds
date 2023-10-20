@@ -305,6 +305,8 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_R)
             {
+                printf("\x1b[5;1H");
+                printf("\x1b[0J"); 
                 g_blob_pool_allocator.clear();
                 g_workspace_pool_allocator.clear();
 

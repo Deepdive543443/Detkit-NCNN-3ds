@@ -46,6 +46,39 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16
     }
 }
 
+void writeMatToFrameBuf(ncnn::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height)
+{
+    cv::Mat ocv_mat(mat.c, mat.h, mat.w);
+    mat.to_pixels(ocv_mat.data, ncnn::Mat::PIXEL_BGR);
+    writeMatToFrameBuf(ocv_mat, buf, x, y, width, height);
+}
+
+void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height)
+{
+    u8 *fb_8 = (u8 *) buf;
+    u8 *image_ptr = (u8 *) mat.data;
+    int size = mat.rows * mat.cols * mat.c;
+
+    // printf("H:  %d W:  %d C:  %d", mat.rows, mat.cols, mat.c);
+
+    int draw_x, draw_y;
+    for(int j = 0; j < height; j++) 
+    {
+        for(int i = 0; i < width; i++) 
+        {
+            draw_y = y + height - j;
+            draw_x = x + i;
+            u32 v = (draw_y + draw_x * height) * 3;
+
+            fb_8[v] = image_ptr[0];
+            fb_8[v+1] = image_ptr[1];
+            fb_8[v+2] = image_ptr[2];
+
+            image_ptr += 3;
+        }
+    }
+}
+
 void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
 {
     
@@ -81,6 +114,8 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     }
 }
 
+
+
 void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, object_rect effect_roi)
 {
     for (size_t i = 0; i < bboxes.size(); i++)
@@ -95,8 +130,8 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, objec
         float y1 = bbox.y1;
         float w = (bbox.x2 - x1);
         float h = (bbox.y2 - y1);
-        x1 -= 80;
-        y1 -= 80;
+        // x1 -= 80;
+        // y1 -= 80;
         x1 *= 1.25;
         y1 *= 1.25;
         w *= 1.25;

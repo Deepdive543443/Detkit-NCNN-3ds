@@ -134,7 +134,14 @@ void hang(const char *message, void* buf, Nanodet &nanodet)
             }
             // draw_bboxes(image_output, bboxes, effect_roi);
             draw_bboxes(image_output, bboxes, effect_roi);
+            // writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
             cv::imwrite("test_image/results.png", image_output);
+
+            writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
+            gfxFlushBuffers();
+            gspWaitForVBlank();
+            gfxSwapBuffers();
+
             printf("Finished\n");
             // ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
             // writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);

@@ -115,6 +115,8 @@ static const char* class_names[] = { "person", "bicycle", "car", "motorcycle", "
 
 void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 width, u16 height);
 void writePictureToMat(ncnn::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16 height);
+void writeMatToFrameBuf(ncnn::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
+void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w);
 void draw_bboxes(const cv::Mat &bgr, const std::vector<BoxInfo> &bboxes, object_rect effect_roi);
 #endif // VISION_Hs

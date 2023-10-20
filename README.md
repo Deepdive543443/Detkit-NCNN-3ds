@@ -1,6 +1,5 @@
 # Nanodet-plus-3ds
-![IMG_20231020_145410](https://github.com/Deepdive543443/Nanodet-plus-3ds/assets/83911295/29fbc40e-2468-4afd-ad26-4b238770eb0a)
-
+![IMG_20231020_145410](https://github.com/Deepdive543443/Nanodet-plus-3ds/assets/83911295/259dfb26-80d7-4e4e-903b-79fdfccb83e3)
 
 
 ## Download

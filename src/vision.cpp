@@ -166,5 +166,7 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
             7, 
             color[0]
         );
+
+        free(color);
     }
 }

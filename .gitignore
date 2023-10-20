@@ -13,3 +13,8 @@ build/nanodet.o
 build/nanodet.d
 test_img_resized.png
 test_img.png
+Nanodet-plus-3ds.3dsx
+Nanodet-plus-3ds.elf
+Nanodet-plus-3ds.smdh
+build/Nanodet-plus-3ds.lst
+build/Nanodet-plus-3ds.map

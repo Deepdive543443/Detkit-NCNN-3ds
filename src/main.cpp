@@ -42,91 +42,91 @@ void hang_err(const char *message)
     }
 }
 
-void hang(const char *message, void* buf, Nanodet &nanodet) 
-{
-	// clearScreen();
-	printf("%s", message);
-	// printf("Press start to exit");
+// void hang(const char *message, void* buf, Nanodet &nanodet) 
+// {
+// 	// clearScreen();
+// 	printf("%s", message);
+// 	// printf("Press start to exit");
 
-    while (1)
-    {
-        hidScanInput();
-        u32 kDown = hidKeysDown();
+//     while (1)
+//     {
+//         hidScanInput();
+//         u32 kDown = hidKeysDown();
         
-        if (kDown & KEY_B) break;
+//         if (kDown & KEY_B) break;
 
-        if (kDown & KEY_A)
-        {
-            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-            cv::Mat image_ocv(320, 320, 3);
+//         if (kDown & KEY_A)
+//         {
+//             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+//             cv::Mat image_ocv(320, 320, 3);
             
-            {
-                ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-                ncnn::Mat resized(320, 320, 3);
+//             {
+//                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+//                 ncnn::Mat resized(320, 320, 3);
 
-                writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+//                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+//                 printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
 
-                bordered_resize(image, resized, 320);
-                resized.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
-            }
+//                 bordered_resize(image, resized, 320);
+//                 resized.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
+//             }
             
 
-            cv::imwrite("test_image/test_img_resized.png", image_ocv);
-            printf("Save image resized\n");
-            printf("Yes  w: %d, h: %d\n", image_ocv.cols, image_ocv.rows);
-        }
+//             cv::imwrite("test_image/test_img_resized.png", image_ocv);
+//             printf("Save image resized\n");
+//             printf("Yes  w: %d, h: %d\n", image_ocv.cols, image_ocv.rows);
+//         }
 
-        if (kDown & KEY_X)
-        {
-            // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
-            ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
-            cv::Mat image_ocv(WIDTH_TOP, WIDTH_TOP, 3);
+//         if (kDown & KEY_X)
+//         {
+//             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
+//             ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
+//             cv::Mat image_ocv(WIDTH_TOP, WIDTH_TOP, 3);
             
-            writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
-            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+//             writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
+//             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
             
-            // cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
-            image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
+//             // cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
+//             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
 
-            // cv::imwrite("sdmc:/image/test_img.png", image_ocv);
-            cv::imwrite("test_image/test_img.png", image_ocv);
+//             // cv::imwrite("sdmc:/image/test_img.png", image_ocv);
+//             cv::imwrite("test_image/test_img.png", image_ocv);
 
-            printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
-            printf("Save image\n");
-        }
+//             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
+//             printf("Save image\n");
+//         }
 
-        if(kDown & KEY_Y)
-        {
-            g_blob_pool_allocator.clear();
-            g_workspace_pool_allocator.clear();
+//         if(kDown & KEY_Y)
+//         {
+//             g_blob_pool_allocator.clear();
+//             g_workspace_pool_allocator.clear();
 
-            cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
-            std::vector<BoxInfo> bboxes;
+//             cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
+//             std::vector<BoxInfo> bboxes;
 
-            {
-                ncnn::Mat resized(320, 320, 3);
-                ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-                writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                bordered_resize(image, resized, 320);
-                image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+//             {
+//                 ncnn::Mat resized(320, 320, 3);
+//                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+//                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+//                 bordered_resize(image, resized, 320);
+//                 image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
-                printf("Detecting\n");
-                bboxes = nanodet.detect(resized);
-            }
+//                 printf("Detecting\n");
+//                 bboxes = nanodet.detect(resized);
+//             }
 
-            draw_bboxes(image_output, bboxes);
-            // cv::imwrite("test_image/results.png", image_output);
+//             draw_bboxes(image_output, bboxes);
+//             // cv::imwrite("test_image/results.png", image_output);
 
-            writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
-            gfxFlushBuffers();
-            gspWaitForVBlank();
-            gfxSwapBuffers();
+//             writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
+//             gfxFlushBuffers();
+//             gspWaitForVBlank();
+//             gfxSwapBuffers();
 
-            printf("Finished\n");
-        }
-    }
-}
+//             printf("Finished\n");
+//         }
+//     }
+// }
 
 int main(int argc, char** argv)
 {
@@ -219,24 +219,23 @@ int main(int argc, char** argv)
 
     Nanodet nanodet;
 
-    if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
-    {
-        hang_err("Failed loading nanodet");
-    }
-
-    // Rom file system pattern
-    // Result rc = romfsInit();
-    // if (rc)
-    //     printf("romfsInit: %08lX\n", rc);
-
-    // else
+    // if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
     // {
-    //     nanodet.create("romfs:/models/nanodet-m.param", "romfs:/models/nanodet-m.bin", opt);
-    //     printf("romfs Init Successful!\n");
+    //     hang_err("Failed loading nanodet");
     // }
 
-    std::cout << "Hello Nano" << std::endl;
-    std::cout << std::to_string(bufSize) << std::endl;
+    // Rom file system pattern
+    Result rc = romfsInit();
+    if (rc)
+        printf("romfsInit: %08lX\n", rc);
+
+    else
+    {
+        nanodet.create("romfs:/models/nanodet-plus-m_416.param", "romfs:/models/nanodet-plus-m_416.bin", opt);
+        printf("romfs Init Successful!\n");
+    }
+
+    printf("Hello Nano\nPress R to detect\n");
     
     while (aptMainLoop())
     {
@@ -306,7 +305,39 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_R)
             {
-                hang("Capturing...\n", buf, nanodet);
+                g_blob_pool_allocator.clear();
+                g_workspace_pool_allocator.clear();
+
+                cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
+                std::vector<BoxInfo> bboxes;
+
+                {
+                    ncnn::Mat resized(320, 320, 3);
+                    ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
+                    writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
+                    bordered_resize(image, resized, 320);
+                    image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+
+                    printf("Detecting\n");
+                    bboxes = nanodet.detect(resized);
+                }
+
+                draw_bboxes(image_output, bboxes);
+                // cv::imwrite("test_image/results.png", image_output);
+
+                writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
+                gfxFlushBuffers();
+                gspWaitForVBlank();
+                gfxSwapBuffers();
+
+                printf("Press B to continue\n");
+                while(1)
+                {
+                    hidScanInput();
+                    u32 kDown = hidKeysDown();
+                    if (kDown & KEY_B) break;
+                }
+                // hang("Capturing...\n", buf, nanodet);
             }
         }
     }
@@ -330,5 +361,4 @@ int main(int argc, char** argv)
     free(buf);
     cleanup();
     return 0;
-
 }

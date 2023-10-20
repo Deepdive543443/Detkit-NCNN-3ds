@@ -161,7 +161,7 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
             image.cols,
             image.rows, 
             class_names[bbox.label],
-            (int) x1, 
+            (int) x1 + 1, 
             (int) y1 + 1,
             7, 
             color[0]

@@ -153,7 +153,18 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
             (int) w,
             (int) h,
             color[0], 
-            3
+            2
+        );
+
+        ncnn::draw_text_c3(
+            image.data,
+            image.cols,
+            image.rows, 
+            class_names[bbox.label],
+            (int) x1, 
+            (int) y1 + 1,
+            7, 
+            color[0]
         );
     }
 }

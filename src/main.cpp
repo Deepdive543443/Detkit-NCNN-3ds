@@ -200,20 +200,22 @@ int main(int argc, char** argv)
 
     // Initialize nanodet
     ncnn::Option opt;
-    opt.lightmode = true;
+    // opt.lightmode = true;
     opt.num_threads = 1;
     opt.use_winograd_convolution = true;
     opt.use_sgemm_convolution = true;
-    opt.use_int8_inference = true;
-    opt.use_vulkan_compute = false;
-    opt.use_fp16_packed = true;
-    opt.use_fp16_storage = true;
+
     opt.use_fp16_arithmetic = true;
-    opt.use_int8_storage = true;
-    opt.use_int8_arithmetic = true;
-    opt.use_packing_layout = true;
-    opt.use_shader_pack8 = false;
-    opt.use_image_storage = false;
+
+    // opt.use_int8_inference = true;
+    // opt.use_vulkan_compute = false;
+    // opt.use_fp16_packed = true;
+    // opt.use_fp16_storage = true;
+    // opt.use_int8_storage = true;
+    // opt.use_int8_arithmetic = true;
+    // opt.use_packing_layout = true;
+    // opt.use_shader_pack8 = false;
+    // opt.use_image_storage = false;
 
     Nanodet nanodet;
 

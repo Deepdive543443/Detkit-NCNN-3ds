@@ -111,10 +111,11 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     }
 }
 
-
-
 void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
 {
+    printf("=======================================\n");
+    printf("% 12s % 2s % ", "Label", "Score");
+    printf("% 4s % 4s % 4s % 4s\n\n","x1", "y1", "x2", "y2");
     for (size_t i = 0; i < bboxes.size(); i++)
     {
         const BoxInfo& bbox = bboxes[i];
@@ -137,10 +138,8 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
         rgba[2] = color_list[bbox.label][2];
         rgba[3] = 255;
 
-        printf("===========\n");
-        printf("%s %f\n", class_names[bbox.label], bbox.score);
-        printf("%d %d %d %d\n",(int) x1, (int) y1, (int) w, (int) h);
-        printf("===========\n");
+        printf("% 12s %02.3f % ", class_names[bbox.label], bbox.score);
+        printf("% 4d % 4d % 4d % 4d\n",(int) x1, (int) y1, (int) w, (int) h);
 
         int *color = (int *) rgba;
 
@@ -167,6 +166,7 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
             color[0]
         );
 
-        free(color);
+        free(rgba);
     }
+    printf("=======================================\n");
 }

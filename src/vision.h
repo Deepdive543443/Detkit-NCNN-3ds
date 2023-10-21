@@ -118,5 +118,6 @@ void writePictureToMat(ncnn::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16
 void writeMatToFrameBuf(ncnn::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w);
+double get_current_time();
 void draw_bboxes(const cv::Mat &bgr, const std::vector<BoxInfo> &bboxes);
 #endif // VISION_Hs

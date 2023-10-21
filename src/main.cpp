@@ -1,5 +1,6 @@
 #include <setjmp.h>
-#include <iostream> // std
+#include <iostream> 
+#include <chrono> // std
 
 #include "3ds.h" // 3ds devkit 
 
@@ -40,6 +41,29 @@ void hang_err(const char *message)
 
         if (kDown & KEY_START) break;
     }
+}
+
+double get_current_time()
+{
+#if (__cplusplus >= 201103L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201103L)) && !defined(__riscv) && !NCNN_SIMPLESTL
+    auto now = std::chrono::high_resolution_clock::now();
+    auto usec = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
+    return usec.count() / 1000.0;
+#else
+#ifdef _WIN32
+    LARGE_INTEGER freq;
+    LARGE_INTEGER pc;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&pc);
+
+    return pc.QuadPart * 1000.0 / freq.QuadPart;
+#else  // _WIN32
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    return tv.tv_sec * 1000.0 + tv.tv_usec / 1000.0;
+#endif // _WIN32
+#endif
 }
 
 // void hang(const char *message, void* buf, Nanodet &nanodet) 
@@ -305,8 +329,8 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_R)
             {
-                printf("\x1b[5;1H");
-                printf("\x1b[0J"); 
+                // printf("\x1b[5;1H");
+                // printf("\x1b[0J"); 
                 g_blob_pool_allocator.clear();
                 g_workspace_pool_allocator.clear();
 
@@ -320,8 +344,13 @@ int main(int argc, char** argv)
                     bordered_resize(image, resized, 320);
                     image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
-                    printf("Detecting\n");
+                    printf("\nDetecting\n");
+                    double start = get_current_time();
                     bboxes = nanodet.detect(resized);
+                    double end = get_current_time();
+
+                    double time = end - start;
+                    printf("Time: %7.2f\n", time);
                 }
 
                 draw_bboxes(image_output, bboxes);

@@ -326,7 +326,12 @@ int main(int argc, char** argv)
 
             // If START button is pressed, break loop and quit
             if (kDown & KEY_START) break;
-
+            if (kDown & KEY_X)
+            {
+                printf("\nInference testing\n");
+                ncnn::Mat input(320, 320, 3);
+                nanodet.inference_test(input);
+            }
             if (kDown & KEY_R)
             {
                 // printf("\x1b[5;1H");

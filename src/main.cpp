@@ -229,9 +229,9 @@ int main(int argc, char** argv)
     opt.use_winograd_convolution = true;
     opt.use_sgemm_convolution = true;
 
-    opt.use_fp16_arithmetic = true;
+    // opt.use_fp16_arithmetic = true;
 
-    // opt.use_int8_inference = true;
+    opt.use_int8_inference = true;
     // opt.use_vulkan_compute = false;
     // opt.use_fp16_packed = true;
     // opt.use_fp16_storage = true;
@@ -255,7 +255,7 @@ int main(int argc, char** argv)
 
     else
     {
-        nanodet.create("romfs:/models/nanodet-plus-m_416.param", "romfs:/models/nanodet-plus-m_416.bin", opt);
+        nanodet.create("romfs:/models/nanodet-plus-m_416-int8.param", "romfs:/models/nanodet-plus-m_416-int8.bin", opt);
         printf("romfs Init Successful!\n");
     }
 

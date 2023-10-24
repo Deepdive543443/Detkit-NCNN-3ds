@@ -13,8 +13,6 @@ Read the build guide from [last project](https://github.com/Deepdive543443/Bench
 ## Issues
 One core and 64mb RAM are too little for real-time detection
 
-This demo is using 416x416 weight for 320x320 input because I haven't find 320x320 weights for NCNN available. Also, INT8 performance is not tested
-
 
 ## Credit
 - [NCNN](https://github.com/Tencent/ncnn): High performance neural network inference computing framework for mobile platform, easy to use and port

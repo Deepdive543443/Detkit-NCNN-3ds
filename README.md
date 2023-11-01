@@ -6,7 +6,7 @@
 Required Homebrew launcher or a title manager like FBI to install or boot.
 [3dsx and CIA](https://github.com/Deepdive543443/Nanodet-plus-3ds/releases/tag/1.0.1)
 
-[pre-build NCNN lib for 3DS](https://github.com/Deepdive543443/Benchncnn-3DS/releases/tag/v0.0.0)
+[Pre-build NCNN lib for 3DS](https://github.com/Deepdive543443/Benchncnn-3DS/releases/tag/v0.0.0)
 
 ## Build
 Read the build guide from [last project](https://github.com/Deepdive543443/Benchncnn-3DS/tree/main) 

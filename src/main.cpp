@@ -66,92 +66,6 @@ double get_current_time()
 #endif
 }
 
-// void hang(const char *message, void* buf, Nanodet &nanodet) 
-// {
-// 	// clearScreen();
-// 	printf("%s", message);
-// 	// printf("Press start to exit");
-
-//     while (1)
-//     {
-//         hidScanInput();
-//         u32 kDown = hidKeysDown();
-        
-//         if (kDown & KEY_B) break;
-
-//         if (kDown & KEY_A)
-//         {
-//             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-//             cv::Mat image_ocv(320, 320, 3);
-            
-//             {
-//                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-//                 ncnn::Mat resized(320, 320, 3);
-
-//                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-//                 printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
-
-//                 bordered_resize(image, resized, 320);
-//                 resized.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
-//             }
-            
-
-//             cv::imwrite("test_image/test_img_resized.png", image_ocv);
-//             printf("Save image resized\n");
-//             printf("Yes  w: %d, h: %d\n", image_ocv.cols, image_ocv.rows);
-//         }
-
-//         if (kDown & KEY_X)
-//         {
-//             // ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3); // should be (w, h, c)
-//             ncnn::Mat image(WIDTH_TOP, WIDTH_TOP, 3);
-//             cv::Mat image_ocv(WIDTH_TOP, WIDTH_TOP, 3);
-            
-//             writePictureToMat(image, buf, 0, HEIGHT_TOP / 4, WIDTH_TOP, HEIGHT_TOP);
-//             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
-            
-//             // cv::Mat image_ocv(HEIGHT_TOP, WIDTH_TOP, 3);
-//             image.to_pixels(image_ocv.data, ncnn::Mat::PIXEL_BGR);
-
-//             // cv::imwrite("sdmc:/image/test_img.png", image_ocv);
-//             cv::imwrite("test_image/test_img.png", image_ocv);
-
-//             printf("H: %d, W: %d, C: %d\n", image.h, image.w, image.c);
-//             printf("Save image\n");
-//         }
-
-//         if(kDown & KEY_Y)
-//         {
-//             g_blob_pool_allocator.clear();
-//             g_workspace_pool_allocator.clear();
-
-//             cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
-//             std::vector<BoxInfo> bboxes;
-
-//             {
-//                 ncnn::Mat resized(320, 320, 3);
-//                 ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-//                 writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-//                 bordered_resize(image, resized, 320);
-//                 image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
-
-//                 printf("Detecting\n");
-//                 bboxes = nanodet.detect(resized);
-//             }
-
-//             draw_bboxes(image_output, bboxes);
-//             // cv::imwrite("test_image/results.png", image_output);
-
-//             writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
-//             gfxFlushBuffers();
-//             gspWaitForVBlank();
-//             gfxSwapBuffers();
-
-//             printf("Finished\n");
-//         }
-//     }
-// }
-
 int main(int argc, char** argv)
 {
     // Loads of Camera initial stuff copy from video example
@@ -220,7 +134,6 @@ int main(int argc, char** argv)
     gfxSwapBuffers();
 
     u32 kDown;
-    // u32 kHeld;
 
     // Initialize nanodet
     ncnn::Option opt;
@@ -228,11 +141,8 @@ int main(int argc, char** argv)
     opt.num_threads = 1;
     opt.use_winograd_convolution = true;
     opt.use_sgemm_convolution = true;
-
     // opt.use_fp16_arithmetic = true;
-
     opt.use_int8_inference = true;
-    // opt.use_vulkan_compute = false;
     // opt.use_fp16_packed = true;
     // opt.use_fp16_storage = true;
     // opt.use_int8_storage = true;
@@ -241,6 +151,7 @@ int main(int argc, char** argv)
     // opt.use_shader_pack8 = false;
     // opt.use_image_storage = false;
 
+    int inference_size = 320;
     Nanodet nanodet;
 
     // if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
@@ -255,7 +166,7 @@ int main(int argc, char** argv)
 
     else
     {
-        nanodet.create("romfs:/models/nanodet-plus-m_416-int8.param", "romfs:/models/nanodet-plus-m_416-int8.bin", opt);
+        nanodet.load_param("romfs:/models/nanodet-plus-m_416-int8.param", "romfs:/models/nanodet-plus-m_416-int8.bin", opt, inference_size);
         printf("romfs Init Successful!\n");
     }
 
@@ -343,10 +254,10 @@ int main(int argc, char** argv)
                 std::vector<BoxInfo> bboxes;
 
                 {
-                    ncnn::Mat resized(320, 320, 3);
+                    ncnn::Mat resized(inference_size, inference_size, 3);
                     ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                     writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                    bordered_resize(image, resized, 320);
+                    bordered_resize(image, resized, inference_size);
                     image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                     printf("\nDetecting\n");

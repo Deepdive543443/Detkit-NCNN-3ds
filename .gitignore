@@ -11,3 +11,5 @@ build/nanodet.o
 build/vision.d
 build/vision.o
 .vscode/settings.json
+build/detector.o
+build/detector.d

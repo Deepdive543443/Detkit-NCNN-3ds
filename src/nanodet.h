@@ -13,7 +13,7 @@ class Nanodet : public Detector
 {
     virtual BoxInfo disPred2Bbox(const float *&dfl_det, int label, float score, int x, int y, int stride);
     virtual void decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors, float threshold, std::vector<std::vector<BoxInfo>> &results);
-    virtual void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
+    
     public:
         virtual void load_param(const char* param, const char* bin, const ncnn::Option &opt, int size);
         virtual std::vector<BoxInfo> detect(ncnn::Mat &input);

@@ -152,6 +152,8 @@ int main(int argc, char** argv)
     // opt.use_image_storage = false;
 
     int inference_size = 320;
+    int drawing_coor = ((float) inference_size / 2 ) - (inference_size / 2);
+    float scale = (float) WIDTH_TOP / 320;
     Nanodet nanodet;
 
     // if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
@@ -257,7 +259,7 @@ int main(int argc, char** argv)
                     ncnn::Mat resized(inference_size, inference_size, 3);
                     ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                     writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                    bordered_resize(image, resized, inference_size);
+                    bordered_resize(image, resized, inference_size, drawing_coor);
                     image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                     printf("\nDetecting\n");
@@ -269,7 +271,7 @@ int main(int argc, char** argv)
                     printf("Time: %7.2f\n", time);
                 }
 
-                draw_bboxes(image_output, bboxes);
+                draw_bboxes(image_output, bboxes, drawing_coor, scale);
                 // cv::imwrite("test_image/results.png", image_output);
 
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);

@@ -117,7 +117,7 @@ void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 widt
 void writePictureToMat(ncnn::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16 height);
 void writeMatToFrameBuf(ncnn::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
-void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w);
+void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int dst_w, int draw_coor);
 double get_current_time();
-void draw_bboxes(const cv::Mat &bgr, const std::vector<BoxInfo> &bboxes);
+void draw_bboxes(const cv::Mat &bgr, const std::vector<BoxInfo> &bboxes, int v_shift, float scaler);
 #endif // VISION_Hs

@@ -76,16 +76,16 @@ void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 he
     }
 }
 
-void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
+void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int dst_w, int draw_coor)
 {
+    int dst_h = src.h * ((float) dst_w / src.w);
     
-    int h = 192;
-    ncnn::Mat resized(320, 192, 3);
+    ncnn::Mat resized(dst_w, dst_h, 3);
     ncnn::resize_bilinear(
         src, 
         resized, 
-        320, 
-        192
+        dst_w, 
+        dst_h
     );
 
     float *dst_ptr = (float *) dst.data;
@@ -94,14 +94,15 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     int src_cstep = resized.cstep;
     int dst_cstep = dst.cstep;
 
-    memset(dst_ptr, 0.f, w * w * 3);
+    memset(dst_ptr, 0.f, dst_w * dst_w * 3);
+    
     for (int c=0; c<3; c++)
     {
-        dst_ptr = dst.row(80) + (c * dst_cstep);
+        dst_ptr = dst.row(draw_coor) + (c * dst_cstep);
         resized_src_ptr = resized.row(0) + (c * src_cstep);
-        for (int j = 0; j < h; j++)
+        for (int j = 0; j < dst_h; j++)
         {
-            for (int i = 0; i < w; i++)
+            for (int i = 0; i < dst_w; i++)
             {
                 dst_ptr[0] = resized_src_ptr[0];
                 dst_ptr++;
@@ -111,7 +112,7 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int w)
     }
 }
 
-void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
+void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v_shift, float scaler)
 {
     printf("=======================================\n");
     printf("% 12s % 2s % ", "Label", "Score");
@@ -125,11 +126,11 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes)
         float w = (bbox.x2 - x1);
         float h = (bbox.y2 - y1);
 
-        y1 -= 80.f;
-        x1 *= 1.25;
-        y1 *= 1.25;
-        w *= 1.25;
-        h *= 1.25;
+        y1 += v_shift;
+        x1 *= scaler;
+        y1 *= scaler;
+        w *= scaler;
+        h *= scaler;
 
         uint8_t *rgba = (uint8_t *) malloc(4);
         

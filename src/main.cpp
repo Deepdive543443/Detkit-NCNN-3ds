@@ -10,6 +10,8 @@
 #include "vision.h" 
 #include "nanodet.h"// utils
 
+// #include "yaml-cpp/yaml.h"
+
 #define WAIT_TIMEOUT 1000000000ULL
 
 #define WIDTH_TOP 400
@@ -45,25 +47,9 @@ void hang_err(const char *message)
 
 double get_current_time()
 {
-#if (__cplusplus >= 201103L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201103L)) && !defined(__riscv) && !NCNN_SIMPLESTL
     auto now = std::chrono::high_resolution_clock::now();
     auto usec = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
     return usec.count() / 1000.0;
-#else
-#ifdef _WIN32
-    LARGE_INTEGER freq;
-    LARGE_INTEGER pc;
-    QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&pc);
-
-    return pc.QuadPart * 1000.0 / freq.QuadPart;
-#else  // _WIN32
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    return tv.tv_sec * 1000.0 + tv.tv_usec / 1000.0;
-#endif // _WIN32
-#endif
 }
 
 int main(int argc, char** argv)
@@ -137,19 +123,10 @@ int main(int argc, char** argv)
 
     // Initialize nanodet
     ncnn::Option opt;
-    // opt.lightmode = true;
     opt.num_threads = 1;
     opt.use_winograd_convolution = true;
     opt.use_sgemm_convolution = true;
-    // opt.use_fp16_arithmetic = true;
     opt.use_int8_inference = true;
-    // opt.use_fp16_packed = true;
-    // opt.use_fp16_storage = true;
-    // opt.use_int8_storage = true;
-    // opt.use_int8_arithmetic = true;
-    // opt.use_packing_layout = true;
-    // opt.use_shader_pack8 = false;
-    // opt.use_image_storage = false;
 
     int inference_size = 320;
     int drawing_coor = ((float) inference_size / 2 ) - (inference_size / 2);
@@ -286,7 +263,6 @@ int main(int argc, char** argv)
                     u32 kDown = hidKeysDown();
                     if (kDown & KEY_B) break;
                 }
-                // hang("Capturing...\n", buf, nanodet);
             }
         }
     }

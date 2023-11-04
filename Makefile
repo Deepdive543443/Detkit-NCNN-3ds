@@ -47,16 +47,22 @@ ROMFS		:=	romfs
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-# ----------------ncnn--------------------
-NCNN_DIR := ../../../cpp_libs/ncnn_3ds # <-Switch to your own path to build yours
-NCNN_LIB_FLAG := $(foreach dir,$(NCNN_DIR),-L$(dir)/lib)
-NCNN_INCLUDE_FLAG := $(foreach dir,$(NCNN_DIR),-I$(dir)/include/ncnn)
+# # ----------------ncnn--------------------
+# NCNN_DIR := ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
+# NCNN_INCLUDE_DIR := ../$(NCNN_DIR)/include/ncnn
 
-APP_TITLE := Nanodet_ncnn
-APP_DESCRIPTION := Nanodet test
-APP_AUTHOR := Deepdiver et al
-ICON := 48_ncnn.png
-# ----------------------------------------
+# # ----------------YAML--------------------
+# # YPP_DIR := ../../cpp_libs/yaml_cpp
+# # YPP_INCLUDE := $(shell find $(YPP_DIR)/include -type d)
+# # YPP_INCLUDE_FLAG := $(foreach dir,$(YPP_INCLUDE),-I../$(dir))#$(shell find ../../cpp_libs/yaml_cpp/include -type d) #$(foreach dir,$(SOURCES),$(wildcard $(dir)/*/)) $(wildcard ../../cpp_libs/yaml_cpp/include/*/)
+
+# # ----------------Info--------------------
+# APP_TITLE := Nanodet_ncnn
+# APP_DESCRIPTION := Nanodet test
+# APP_AUTHOR := Deepdiver et al
+# ICON := 48_ncnn.png
+
+# # ----------------------------------------
 
 CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
@@ -69,13 +75,32 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lctru -lm -lncnn
+LIBS	:= -lctru -lm#-lncnn -lyaml-cpp
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CTRULIB) $(NCNN_DIR)
+
+# ----------------ncnn--------------------
+NCNN_DIR := ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
+NCNN_INCLUDE_DIR := ../$(NCNN_DIR)/include/ncnn
+LIBS += -lncnn
+
+# ----------------YAML--------------------
+# YPP_DIR := ../../cpp_libs/yaml_cpp
+# YPP_INCLUDE := $(shell find $(YPP_DIR)/include -type d)
+# YPP_INCLUDE_FLAG := $(foreach dir,$(YPP_INCLUDE),-I../$(dir))#$(shell find ../../cpp_libs/yaml_cpp/include -type d) #$(foreach dir,$(SOURCES),$(wildcard $(dir)/*/)) $(wildcard ../../cpp_libs/yaml_cpp/include/*/)
+
+# ----------------Info--------------------
+APP_TITLE := Nanodet_ncnn
+APP_DESCRIPTION := Nanodet test
+APP_AUTHOR := Deepdiver et al
+ICON := 48_ncnn.png
+
+# ----------------------------------------
+LIBDIRS	:= $(CTRULIB) ../$(NCNN_DIR)#../$(YPP_DIR)/3ds
+INCLUDEDIRS := $(NCNN_INCLUDE_DIR)
 
 
 #---------------------------------------------------------------------------------
@@ -143,9 +168,8 @@ export HFILES	:=	$(PICAFILES:.v.pica=_shbin.h) $(SHLISTFILES:.shlist=_shbin.h) \
 
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD) \
-			$(NCNN_INCLUDE_FLAG) # <- NCNN has additional include path, so we added it here manually
-
+			$(foreach dir,$(INCLUDEDIRS),-I$(dir)) \
+			-I$(CURDIR)/$(BUILD)
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
@@ -244,3 +268,5 @@ endif
 #---------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
+debug: 
+	@echo YPP_INCLUDE: $(YPP_INCLUDE_FLAG)

@@ -18,10 +18,6 @@
 #define HEIGHT_TOP 240
 #define SCREEN_SIZE_TOP WIDTH_TOP * HEIGHT_TOP
 
-#define WIDTH_BOTTOM 320
-#define HEIGHT_BOTTOM  240
-#define SCREEN_SIZE_BOTTOM  WIDTH_BOTTOM  * HEIGHT_BOTTOM 
-
 static jmp_buf exitJmp;
 static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
 static ncnn::PoolAllocator g_workspace_pool_allocator;
@@ -119,25 +115,10 @@ int main(int argc, char** argv)
     gspWaitForVBlank();
     gfxSwapBuffers();
 
+
     u32 kDown;
 
-    // Initialize nanodet
-    ncnn::Option opt;
-    opt.num_threads = 1;
-    opt.use_winograd_convolution = true;
-    opt.use_sgemm_convolution = true;
-    opt.use_int8_inference = true;
-
-    int inference_size = 320;
-    int drawing_coor = ((float) inference_size / 2 ) - (inference_size / 2);
-    float scale = (float) WIDTH_TOP / 320;
     Nanodet nanodet;
-
-    // if (nanodet.create("models/nanodet-plus-m_416.param", "models/nanodet-plus-m_416.bin", opt))
-    // {
-    //     hang_err("Failed loading nanodet");
-    // }
-
     // Rom file system pattern
     Result rc = romfsInit();
     if (rc)
@@ -145,9 +126,13 @@ int main(int argc, char** argv)
 
     else
     {
-        nanodet.load_param("romfs:/models/nanodet-plus-m_416-int8.param", "romfs:/models/nanodet-plus-m_416-int8.bin", opt, inference_size);
+        nanodet.load_param("romfs:/models/nanodet-plus-m_416-int8.json");
         printf("romfs Init Successful!\n");
     }
+
+    int inference_size = nanodet.input_size[0];
+    int drawing_coor = ((float) inference_size / 2 ) - (inference_size / 2);
+    float scale = (float) WIDTH_TOP / inference_size;
 
     printf("Hello Nano\nPress R to detect\n");
     
@@ -219,7 +204,7 @@ int main(int argc, char** argv)
             if (kDown & KEY_X)
             {
                 printf("\nInference testing\n");
-                ncnn::Mat input(320, 320, 3);
+                ncnn::Mat input(inference_size, inference_size, 3);
                 nanodet.inference_test(input);
             }
             if (kDown & KEY_R)

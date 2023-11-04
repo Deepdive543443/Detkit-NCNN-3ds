@@ -1,0 +1,25 @@
+{
+    "name": "nanodet",
+    "bin": "romfs:/models/nanodet-plus-m_416-int8.bin",
+    "param": "romfs:/models/nanodet-plus-m_416-int8.param",
+
+    "config":
+    {
+        "input_shape": [320, 320],
+        "stride": [8, 16, 32, 64],
+        "num_classes": 80,
+        "reg_max": 7,
+
+        "mean_vals": [103.53, 116.28, 123.675],
+        "norm_vals": [0.017429, 0.017507, 0.017125]        
+    },
+
+    "ncnn":
+    {
+        "num_threats": 1,
+        "winograd_convolution": true,
+        "sgemm_convolution": true,
+        "int8_inference": true
+    }
+}
+

@@ -21,8 +21,6 @@ static void generate_grid_center_priors(const int input_height, const int input_
     }
 }
 
-
-
 BoxInfo Nanodet::disPred2Bbox(const float *&dfl_det, int label, float score, int x, int y, int stride)
 {
     float ct_x = x * stride;
@@ -86,34 +84,40 @@ void Nanodet::decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors,
     }
 }
 
-void Nanodet::load_param(const char* param, const char* bin, const ncnn::Option &opt, int size)
+void Nanodet::load_param(const char* json_file)
 {
-    input_size[0] = size;
-    input_size[1] = size;
-    int stride = 8;
-    for (int i = 1; i <= 4; i++)
+    FILE* fp = fopen(json_file, "rb"); 
+    char readBuffer[4000];
+    rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer)); 
+    rapidjson::Document doc; 
+    doc.ParseStream(is); 
+    fclose(fp);
+
+    input_size[0] = doc["config"]["input_shape"][0].GetInt();
+    input_size[1] = doc["config"]["input_shape"][1].GetInt();
+
+    for (auto &stride: doc["config"]["stride"].GetArray())
     {
-        strides.push_back(stride);
-        stride *= 2;
+        strides.push_back(stride.GetInt());
     }
 
-    
-    num_class = 80;
-    reg_max = 7;
+    num_class = doc["config"]["num_classes"].GetInt();;
+    reg_max = doc["config"]["reg_max"].GetInt();
 
-    // const float mean_vals[3] = { 103.53f, 116.28f, 123.675f };
-    // const float norm_vals[3] = { 0.017429f, 0.017507f, 0.017125f };
+    for (int i = 0; i < 3; i++)
+    {
+        mean_vals[i] = doc["config"]["mean_vals"][i].GetFloat();
+        norm_vals[i] = doc["config"]["norm_vals"][i].GetFloat();
+    }
 
+    // NCNN opt
+    ncnn::Option opt;
+    opt.num_threads = doc["ncnn"]["num_threats"].GetInt();
+    opt.use_winograd_convolution = doc["ncnn"]["winograd_convolution"].GetBool();
+    opt.use_sgemm_convolution = doc["ncnn"]["sgemm_convolution"].GetBool();
+    opt.use_int8_inference = doc["ncnn"]["int8_inference"].GetBool();
 
-    mean_vals[0] = 103.53f;
-    mean_vals[1] = 116.28f;
-    mean_vals[2] = 123.675f;
-
-    norm_vals[0] = 0.017429f;
-    norm_vals[1] = 0.017507f;
-    norm_vals[2] = 0.017125f;
-
-    create(param, bin, opt);
+    create(doc["param"].GetString(), doc["bin"].GetString(), opt);
     generate_grid_center_priors(input_size[0], input_size[1], strides, center_priors);
 }
 

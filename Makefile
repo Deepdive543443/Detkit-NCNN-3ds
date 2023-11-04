@@ -46,24 +46,6 @@ ROMFS		:=	romfs
 # options for code generation
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
-
-# # ----------------ncnn--------------------
-# NCNN_DIR := ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
-# NCNN_INCLUDE_DIR := ../$(NCNN_DIR)/include/ncnn
-
-# # ----------------YAML--------------------
-# # YPP_DIR := ../../cpp_libs/yaml_cpp
-# # YPP_INCLUDE := $(shell find $(YPP_DIR)/include -type d)
-# # YPP_INCLUDE_FLAG := $(foreach dir,$(YPP_INCLUDE),-I../$(dir))#$(shell find ../../cpp_libs/yaml_cpp/include -type d) #$(foreach dir,$(SOURCES),$(wildcard $(dir)/*/)) $(wildcard ../../cpp_libs/yaml_cpp/include/*/)
-
-# # ----------------Info--------------------
-# APP_TITLE := Nanodet_ncnn
-# APP_DESCRIPTION := Nanodet test
-# APP_AUTHOR := Deepdiver et al
-# ICON := 48_ncnn.png
-
-# # ----------------------------------------
-
 CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
@@ -75,7 +57,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lctru -lm#-lncnn -lyaml-cpp
+LIBS	:= -lctru -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -87,10 +69,9 @@ NCNN_DIR := ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
 NCNN_INCLUDE_DIR := ../$(NCNN_DIR)/include/ncnn
 LIBS += -lncnn
 
-# ----------------YAML--------------------
-# YPP_DIR := ../../cpp_libs/yaml_cpp
-# YPP_INCLUDE := $(shell find $(YPP_DIR)/include -type d)
-# YPP_INCLUDE_FLAG := $(foreach dir,$(YPP_INCLUDE),-I../$(dir))#$(shell find ../../cpp_libs/yaml_cpp/include -type d) #$(foreach dir,$(SOURCES),$(wildcard $(dir)/*/)) $(wildcard ../../cpp_libs/yaml_cpp/include/*/)
+# --------------RapidJSON-----------------
+RPP_DIR := ../../cpp_libs/rapidjson-1.1.0
+RPP_INCLUDE_DIR := ../$(RPP_DIR)/include#$(shell find $(RPP_DIR)/include -type d)
 
 # ----------------Info--------------------
 APP_TITLE := Nanodet_ncnn
@@ -98,9 +79,9 @@ APP_DESCRIPTION := Nanodet test
 APP_AUTHOR := Deepdiver et al
 ICON := 48_ncnn.png
 
-# ----------------------------------------
-LIBDIRS	:= $(CTRULIB) ../$(NCNN_DIR)#../$(YPP_DIR)/3ds
-INCLUDEDIRS := $(NCNN_INCLUDE_DIR)
+# ----------------Link--------------------
+LIB_DIRS	 := $(CTRULIB) ../$(NCNN_DIR)
+INCLUDE_DIRS := $(NCNN_INCLUDE_DIR) $(RPP_INCLUDE_DIR)
 
 
 #---------------------------------------------------------------------------------
@@ -167,11 +148,11 @@ export HFILES	:=	$(PICAFILES:.v.pica=_shbin.h) $(SHLISTFILES:.shlist=_shbin.h) \
 			$(GFXFILES:.t3s=.h)
 
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			$(foreach dir,$(INCLUDEDIRS),-I$(dir)) \
+			$(foreach dir,$(LIB_DIRS),-I$(dir)/include) \
+			$(foreach dir,$(INCLUDE_DIRS),-I$(dir)) \
 			-I$(CURDIR)/$(BUILD)
 
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+export LIBPATHS	:=	$(foreach dir,$(LIB_DIRS),-L$(dir)/lib)
 
 export _3DSXDEPS	:=	$(if $(NO_SMDH),,$(OUTPUT).smdh)
 
@@ -269,4 +250,5 @@ endif
 
 #---------------------------------------------------------------------------------
 debug: 
-	@echo YPP_INCLUDE: $(YPP_INCLUDE_FLAG)
+	@echo RPP_INCLUDE_DIR: $(RPP_INCLUDE_DIR)
+	@echo RPP_INCLUDE_FLAG: $(RPP_INCLUDE_FLAG)

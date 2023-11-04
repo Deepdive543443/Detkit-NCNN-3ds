@@ -15,7 +15,7 @@ class Nanodet : public Detector
     virtual void decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors, float threshold, std::vector<std::vector<BoxInfo>> &results);
     
     public:
-        virtual void load_param(const char* param, const char* bin, const ncnn::Option &opt, int size);
+        virtual void load_param(const char* json_file);
         virtual std::vector<BoxInfo> detect(ncnn::Mat &input);
 };
 #endif // NANODET_H

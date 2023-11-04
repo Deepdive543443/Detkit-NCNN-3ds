@@ -4,6 +4,11 @@
 #include "net.h"
 #include <vector>
 
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/filereadstream.h"
+
 typedef struct HeadInfo
 {
     std::string cls_layer;

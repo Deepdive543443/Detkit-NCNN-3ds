@@ -10,10 +10,7 @@
 #include "vision.h" 
 #include "nanodet.h"// utils
 
-// #include "yaml-cpp/yaml.h"
-
 #define WAIT_TIMEOUT 1000000000ULL
-
 #define WIDTH_TOP 400
 #define HEIGHT_TOP 240
 #define SCREEN_SIZE_TOP WIDTH_TOP * HEIGHT_TOP
@@ -70,9 +67,6 @@ int main(int argc, char** argv)
     camInit();
     CAMU_SetSize(SELECT_OUT1_OUT2, SIZE_CTR_TOP_LCD, CONTEXT_A);
     
-    // OUTPUT_RGB_565 would compress 24bit RGB channels into 16bit
-    // with trade off that less channels being represented
-    // G have more channels because of human eyes are more sensitive to green
     CAMU_SetOutputFormat(SELECT_OUT1_OUT2, OUTPUT_RGB_565, CONTEXT_A);
     CAMU_SetFrameRate(SELECT_OUT1_OUT2, FRAME_RATE_30);
 
@@ -126,7 +120,7 @@ int main(int argc, char** argv)
 
     else
     {
-        nanodet.load_param("romfs:/models/nanodet-plus-m_416-int8.json");
+        nanodet.load_param("romfs:/config/nanodet-plus-m_416-int8.json");
         printf("romfs Init Successful!\n");
     }
 
@@ -201,16 +195,22 @@ int main(int argc, char** argv)
 
             // If START button is pressed, break loop and quit
             if (kDown & KEY_START) break;
+            
             if (kDown & KEY_X)
             {
                 printf("\nInference testing\n");
                 ncnn::Mat input(inference_size, inference_size, 3);
+
+                double start = get_current_time();
                 nanodet.inference_test(input);
+                double end = get_current_time();
+
+                double time = end - start;
+                printf("Time: %7.2f\n", time);
             }
+
             if (kDown & KEY_R)
             {
-                // printf("\x1b[5;1H");
-                // printf("\x1b[0J"); 
                 g_blob_pool_allocator.clear();
                 g_workspace_pool_allocator.clear();
 
@@ -234,7 +234,6 @@ int main(int argc, char** argv)
                 }
 
                 draw_bboxes(image_output, bboxes, drawing_coor, scale);
-                // cv::imwrite("test_image/results.png", image_output);
 
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 gfxFlushBuffers();
@@ -263,8 +262,6 @@ int main(int argc, char** argv)
             svcCloseHandle(camReceiveEvent[i]);
         }
     }
-
-    // printf("CAMU_Activate: 0x%08X\n", (unsigned int) CAMU_Activate(SELECT_NONE));
     CAMU_Activate(SELECT_NONE);
 
     // Exit

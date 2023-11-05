@@ -1,4 +1,5 @@
 #include "nanodet.h"
+#include "vision.h"
 
 static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors)
 {

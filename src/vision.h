@@ -120,4 +120,4 @@ void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 he
 void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int dst_w, int draw_coor);
 double get_current_time();
 void draw_bboxes(const cv::Mat &bgr, const std::vector<BoxInfo> &bboxes, int v_shift, float scaler);
-#endif // VISION_Hs
+#endif // VISION_H

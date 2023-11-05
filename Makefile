@@ -65,23 +65,23 @@ LIBS	:= -lctru -lm
 #---------------------------------------------------------------------------------
 
 # ----------------ncnn--------------------
-NCNN_DIR := ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
-NCNN_INCLUDE_DIR := ../$(NCNN_DIR)/include/ncnn
+NCNN_DIR 			:= ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
+NCNN_INCLUDE_DIR 	:= ../$(NCNN_DIR)/include/ncnn
 LIBS += -lncnn
 
 # --------------RapidJSON-----------------
-RPP_DIR := ../../cpp_libs/rapidjson-1.1.0
-RPP_INCLUDE_DIR := ../$(RPP_DIR)/include#$(shell find $(RPP_DIR)/include -type d)
+RPP_DIR 			:= ../../cpp_libs/rapidjson-1.1.0
+RPP_INCLUDE_DIR 	:= ../$(RPP_DIR)/include#$(shell find $(RPP_DIR)/include -type d)
 
 # ----------------Info--------------------
-APP_TITLE := Nanodet_ncnn
-APP_DESCRIPTION := Nanodet test
-APP_AUTHOR := Deepdiver et al
-ICON := 48_ncnn.png
+APP_TITLE 			:= Nanodet_ncnn
+APP_DESCRIPTION 	:= Nanodet ncnn on 3DS
+APP_AUTHOR 			:= Deepdiver et al
+ICON 				:= 48_ncnn.png
 
 # ----------------Link--------------------
-LIB_DIRS	 := $(CTRULIB) ../$(NCNN_DIR)
-INCLUDE_DIRS := $(NCNN_INCLUDE_DIR) $(RPP_INCLUDE_DIR)
+LIB_DIRS	 		:= $(CTRULIB) ../$(NCNN_DIR)
+INCLUDE_DIRS 		:= $(NCNN_INCLUDE_DIR) $(RPP_INCLUDE_DIR)
 
 
 #---------------------------------------------------------------------------------

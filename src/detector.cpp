@@ -10,9 +10,14 @@ inline float fast_exp(float x)
     return v.f;
 }
 
-inline float sigmoid(float x)
+inline float fast_sigmoid(float x)
 {
     return 1.0f / (1.0f + fast_exp(-x));
+}
+
+inline float fast_tanh(float x)
+{
+    return 2.f / (1.f + fast_exp(-2 * x)) - 1.f;
 }
 
 int activation_function_softmax(const float *src, float *dst, int length)

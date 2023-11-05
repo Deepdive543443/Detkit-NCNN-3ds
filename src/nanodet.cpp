@@ -128,14 +128,20 @@ std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
     results.resize(num_class);
 
     // Preprocessing
-    input.substract_mean_normalize(mean_vals, norm_vals);
-    ncnn::Extractor ex = detector.create_extractor();
-    ex.input("data", input);
+    {
+        input.substract_mean_normalize(mean_vals, norm_vals);
+        ncnn::Extractor ex = detector.create_extractor();
 
-    // Prediction
-    ncnn::Mat out;
-    ex.extract("output", out);
-    decode(out, center_priors, 0.4, results);
+        ncnn::Mat resized(input_size[0], input_size[1], 3);
+        bordered_resize(input, resized, input_size[0], ((float) input_size[0] / 2 ) - (input_size[0] / 2));
+
+        ex.input("data", resized);
+
+        // Prediction
+        ncnn::Mat out;
+        ex.extract("output", out);
+        decode(out, center_priors, 0.4, results);
+    }
 
     std::vector<BoxInfo> dets;
     for (int i = 0; i < (int)results.size(); i++)

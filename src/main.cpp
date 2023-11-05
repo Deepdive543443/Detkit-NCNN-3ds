@@ -199,10 +199,9 @@ int main(int argc, char** argv)
             if (kDown & KEY_X)
             {
                 printf("\nInference testing\n");
-                ncnn::Mat input(inference_size, inference_size, 3);
 
                 double start = get_current_time();
-                nanodet.inference_test(input);
+                nanodet.inference_test();
                 double end = get_current_time();
 
                 double time = end - start;
@@ -218,15 +217,13 @@ int main(int argc, char** argv)
                 std::vector<BoxInfo> bboxes;
 
                 {
-                    ncnn::Mat resized(inference_size, inference_size, 3);
                     ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                     writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                    bordered_resize(image, resized, inference_size, drawing_coor);
                     image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                     printf("\nDetecting\n");
                     double start = get_current_time();
-                    bboxes = nanodet.detect(resized);
+                    bboxes = nanodet.detect(image);
                     double end = get_current_time();
 
                     double time = end - start;

@@ -55,9 +55,10 @@ int Detector::create(const char* param, const char* bin, const ncnn::Option &opt
     return 0;
 }
 
-void Detector::inference_test(ncnn::Mat &input)
+void Detector::inference_test()
 {
-    input.substract_mean_normalize(mean_vals, norm_vals);
+    ncnn::Mat input(input_size[0], input_size[1], 3);
+    // input.substract_mean_normalize(mean_vals, norm_vals);
 
     const std::vector<const char*>& input_names = detector.input_names();
     const std::vector<const char*>& output_names = detector.output_names();

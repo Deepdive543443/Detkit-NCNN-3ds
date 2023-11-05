@@ -53,7 +53,7 @@ class Detector
         
 
         virtual int create(const char* param, const char* bin, const ncnn::Option &opt);
-        virtual void inference_test(ncnn::Mat &input);
+        virtual void inference_test();
         virtual void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
 };
 

@@ -112,8 +112,8 @@ int main(int argc, char** argv)
 
     u32 kDown;
 
-    FastestDet *model = nullptr;
-    model = new FastestDet();
+    // FastestDet *model = nullptr;
+    // model = new FastestDet();
 
 
     // Nanodet *model = nullptr;
@@ -128,11 +128,18 @@ int main(int argc, char** argv)
     else
     {
         // model->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
-        model->load_param("romfs:/config/fastestdet.json");
+        // model->load_param("romfs:/config/fastestdet.json");
         printf("romfs Init Successful!\n");
     }
 
-    printf("Hello Nano\nPress R to detect\n");
+    Nanodet *nanodet = new Nanodet();
+    FastestDet *fastestDet = nullptr;
+    nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+    int model_ptr = 0;
+
+
+    printf("Hello Nano\nPress R to detect\nPress L to switch to Nanodet\n");
+    
     
     while (aptMainLoop())
     {
@@ -199,15 +206,53 @@ int main(int argc, char** argv)
 
             // If START button is pressed, break loop and quit
             if (kDown & KEY_START) break;
+
+            if (kDown & KEY_L)
+            {
+                switch (model_ptr)
+                {
+                case 0:
+                    delete nanodet;
+
+                    fastestDet = new FastestDet();
+                    fastestDet->load_param("romfs:/config/fastestdet.json");
+                    model_ptr = 1;
+                    printf("\nLoad Fastest Det successful\nPress L to switch to Nanodet\n");
+                    break;
+
+                case 1:
+                    delete fastestDet;
+
+                    nanodet = new Nanodet();
+                    nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+                    model_ptr = 0;
+                    printf("Load Nanodet successful\nPress L to switch to FastestDet\n");
+                    break;
+                
+                default:
+                    break;
+                }
+            }
             
             if (kDown & KEY_X)
             {
                 printf("\nInference testing\n");
 
                 double start = get_current_time();
-                model->inference_test();
-                double end = get_current_time();
+                switch (model_ptr)
+                {
+                case 0:
+                    nanodet->inference_test();
+                    break;
 
+                case 1:
+                    fastestDet->inference_test();
+                    break;
+                
+                default:
+                    break;
+                }
+                double end = get_current_time();
                 double time = end - start;
                 printf("Time: %7.2f\n", time);
             }
@@ -227,14 +272,37 @@ int main(int argc, char** argv)
 
                     printf("\nDetecting\n");
                     double start = get_current_time();
-                    bboxes = model->detect(image);
+                    switch (model_ptr)
+                    {
+                        case 0:
+                            bboxes = nanodet->detect(image);
+                            break;
+
+                        case 1:
+                            bboxes = fastestDet->detect(image);
+                            break;
+                        
+                        default:
+                            break;
+                    }
                     double end = get_current_time();
 
                     double time = end - start;
                     printf("Time: %7.2f\n", time);
                 }
-                model->draw_boxxes(image_output, bboxes);
+                switch (model_ptr)
+                {
+                    case 0:
+                        nanodet->draw_boxxes(image_output, bboxes);
+                        break;
 
+                    case 1:
+                        fastestDet->draw_boxxes(image_output, bboxes);
+                        break;
+                    
+                    default:
+                        break;
+                }
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 gfxFlushBuffers();
                 gspWaitForVBlank();
@@ -252,7 +320,19 @@ int main(int argc, char** argv)
     }
 
     // Stop camera, release allocated memory
-    delete model;
+    switch (model_ptr)
+    {
+        case 0:
+            delete nanodet;
+            break;
+
+        case 1:
+            delete fastestDet;
+            break;
+        
+        default:
+            break;
+    }
     CAMU_StopCapture(PORT_CAM1);
 
     // Close camera event handles

@@ -15,6 +15,7 @@ Required Homebrew launcher or a title manager like FBI to install or boot.
 [Pre-build NCNN lib for 3DS](https://github.com/Deepdive543443/Benchncnn-3DS/releases/tag/v0.0.0)
 
 ## Build
+This project has dependencies on NCNN and RapidJSON.
 Read the build guide from [last project](https://github.com/Deepdive543443/Benchncnn-3DS/tree/main) 
 
 
@@ -26,6 +27,7 @@ One core and 64mb RAM are too little for real-time detection
 - [NCNN](https://github.com/Tencent/ncnn): High performance neural network inference computing framework for mobile platform, easy to use and port
 - [Nanodet-Plus](https://github.com/RangiLyu/nanodet):  Super light weight anchor-free object detection model
 - [Fastest-Det](https://github.com/dog-qiuqiu/FastestDet): A FASTER, STRONGER, SIMPLER single scale anchor-free object detection model
+- [RapidJSON](https://rapidjson.org/): Light-weight Header only JSON parser for C++ 11 and above.
 - [DevkitPRO](https://devkitpro.org/wiki/Getting_Started): Toolchain for 3DS homebrew development
 - [3DS-cmake](https://github.com/Xtansia/3ds-cmake): Toolchain files to build CMake project for 3DS
 - [FTPD-Pro](https://github.com/mtheall/ftpd): FTP Server for 3DS/Switch/Linux.

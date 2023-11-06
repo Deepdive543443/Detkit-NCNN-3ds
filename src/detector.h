@@ -2,6 +2,7 @@
 #define DETECTOR_H
 
 #include "net.h"
+#include "simpleocv.h"
 #include <vector>
 
 #include "rapidjson/document.h"

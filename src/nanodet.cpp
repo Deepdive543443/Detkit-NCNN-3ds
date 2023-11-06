@@ -1,5 +1,4 @@
 #include "nanodet.h"
-#include "vision.h"
 
 static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors)
 {
@@ -127,13 +126,13 @@ std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
     std::vector<std::vector<BoxInfo>> results;
     results.resize(num_class);
 
-    // Preprocessing
     {
+        // Preprocessing
         input.substract_mean_normalize(mean_vals, norm_vals);
         ncnn::Extractor ex = detector.create_extractor();
 
         ncnn::Mat resized(input_size[0], input_size[1], 3);
-        bordered_resize(input, resized, input_size[0], ((float) input_size[0] / 2 ) - (input_size[0] / 2));
+        bordered_resize(input, resized, input_size[0], 0);
 
         ex.input("data", resized);
 
@@ -154,4 +153,10 @@ std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
         }
     }
     return dets;
+}
+
+void Nanodet::draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes)
+{
+    float scale = (float) input.cols / input_size[0];
+    draw_bboxes(input, boxxes, 0, scale, scale);
 }

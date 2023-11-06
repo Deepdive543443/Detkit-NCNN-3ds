@@ -7,7 +7,6 @@
 #include "net.h"
 #include "simpleocv.h" // ncnn
 
-#include "vision.h" 
 #include "nanodet.h"// utils
 
 #define WAIT_TIMEOUT 1000000000ULL
@@ -112,7 +111,7 @@ int main(int argc, char** argv)
 
     u32 kDown;
 
-    Nanodet nanodet;
+    Nanodet model;
     // Rom file system pattern
     Result rc = romfsInit();
     if (rc)
@@ -120,13 +119,9 @@ int main(int argc, char** argv)
 
     else
     {
-        nanodet.load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+        model.load_param("romfs:/config/nanodet-plus-m_416-int8.json");
         printf("romfs Init Successful!\n");
     }
-
-    int inference_size = nanodet.input_size[0];
-    int drawing_coor = ((float) inference_size / 2 ) - (inference_size / 2);
-    float scale = (float) WIDTH_TOP / inference_size;
 
     printf("Hello Nano\nPress R to detect\n");
     
@@ -201,7 +196,7 @@ int main(int argc, char** argv)
                 printf("\nInference testing\n");
 
                 double start = get_current_time();
-                nanodet.inference_test();
+                model.inference_test();
                 double end = get_current_time();
 
                 double time = end - start;
@@ -223,14 +218,14 @@ int main(int argc, char** argv)
 
                     printf("\nDetecting\n");
                     double start = get_current_time();
-                    bboxes = nanodet.detect(image);
+                    bboxes = model.detect(image);
                     double end = get_current_time();
 
                     double time = end - start;
                     printf("Time: %7.2f\n", time);
                 }
-
-                draw_bboxes(image_output, bboxes, drawing_coor, scale);
+                model.draw_boxxes(image_output, bboxes);
+                // draw_bboxes(image_output, bboxes, drawing_coor, scale);
 
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 gfxFlushBuffers();

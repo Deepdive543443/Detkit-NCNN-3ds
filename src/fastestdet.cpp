@@ -41,8 +41,6 @@ std::vector<BoxInfo> FastestDet::detect(ncnn::Mat &input)
         ncnn::Extractor ex = detector.create_extractor();
 
         ex.input("data", resized);
-
-        // Prediction
         ex.extract("output", out);
     }
 

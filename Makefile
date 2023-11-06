@@ -70,18 +70,18 @@ NCNN_INCLUDE_DIR 	:= ../$(NCNN_DIR)/include/ncnn
 LIBS += -lncnn
 
 # --------------RapidJSON-----------------
-RPP_DIR 			:= ../../cpp_libs/rapidjson-1.1.0
-RPP_INCLUDE_DIR 	:= ../$(RPP_DIR)/include#$(shell find $(RPP_DIR)/include -type d)
+RPJSON_DIR 			:= ../../cpp_libs/rapidjson-1.1.0
+RPJSON_INCLUDE_DIR 	:= ../$(RPJSON_DIR)/include#$(shell find $(RPP_DIR)/include -type d)
 
 # ----------------Info--------------------
-APP_TITLE 			:= Nanodet_ncnn
-APP_DESCRIPTION 	:= Nanodet ncnn on 3DS
+APP_TITLE 			:= Detkit NCNN
+APP_DESCRIPTION 	:= Lightweight Object detector powered by NCNN
 APP_AUTHOR 			:= Deepdiver et al
 ICON 				:= 48_ncnn.png
 
 # ----------------Link--------------------
 LIB_DIRS	 		:= $(CTRULIB) ../$(NCNN_DIR)
-INCLUDE_DIRS 		:= $(NCNN_INCLUDE_DIR) $(RPP_INCLUDE_DIR)
+INCLUDE_DIRS 		:= $(NCNN_INCLUDE_DIR) $(RPJSON_INCLUDE_DIR)
 
 
 #---------------------------------------------------------------------------------
@@ -246,9 +246,3 @@ $(OUTPUT).elf	:	$(OFILES)
 
 #---------------------------------------------------------------------------------------
 endif
-#---------------------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------------
-debug: 
-	@echo RPP_INCLUDE_DIR: $(RPP_INCLUDE_DIR)
-	@echo RPP_INCLUDE_FLAG: $(RPP_INCLUDE_FLAG)

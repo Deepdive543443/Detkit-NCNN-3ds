@@ -47,7 +47,6 @@ BoxInfo Nanodet::disPred2Bbox(const float *&dfl_det, int label, float score, int
     float xmax = (std::min)(ct_x + dis_pred[2], (float)this->input_size[0]);
     float ymax = (std::min)(ct_y + dis_pred[3], (float)this->input_size[1]);
 
-    //std::cout << xmin << "," << ymin << "," << xmax << "," << xmax << "," << std::endl;
     return BoxInfo { xmin, ymin, xmax, ymax, score, label };
 }
 
@@ -62,7 +61,6 @@ void Nanodet::decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors,
         int ctr_y = center_priors[i].y;
         int ctr_stride = center_priors[i].stride;
 
-        // We have output in shape [1, 2212, 112]
         score_ptr = output.row(i); // point to the second dim
         float score = 0;
         int cur_label = 0;

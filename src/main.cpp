@@ -111,15 +111,6 @@ int main(int argc, char** argv)
 
 
     u32 kDown;
-
-    // FastestDet *model = nullptr;
-    // model = new FastestDet();
-
-
-    // Nanodet *model = nullptr;
-    // model = new Nanodet();
-
-
     // Rom file system pattern
     Result rc = romfsInit();
     if (rc)
@@ -127,8 +118,6 @@ int main(int argc, char** argv)
 
     else
     {
-        // model->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
-        // model->load_param("romfs:/config/fastestdet.json");
         printf("romfs Init Successful!\n");
     }
 
@@ -138,7 +127,7 @@ int main(int argc, char** argv)
     int model_ptr = 0;
 
 
-    printf("Hello Nano\nPress R to detect\nPress L to switch to Nanodet\n");
+    printf("Hello Nano\nPress R to detect\nPress L to switch to FastestDet\n");
     
     
     while (aptMainLoop())

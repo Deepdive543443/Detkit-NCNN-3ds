@@ -7,6 +7,7 @@
 #include "net.h"
 #include "simpleocv.h" // ncnn
 
+#include "fastestdet.h"
 #include "nanodet.h"// utils
 
 #define WAIT_TIMEOUT 1000000000ULL
@@ -111,7 +112,14 @@ int main(int argc, char** argv)
 
     u32 kDown;
 
-    Nanodet model;
+    FastestDet *model = nullptr;
+    model = new FastestDet();
+
+
+    // Nanodet *model = nullptr;
+    // model = new Nanodet();
+
+
     // Rom file system pattern
     Result rc = romfsInit();
     if (rc)
@@ -119,7 +127,8 @@ int main(int argc, char** argv)
 
     else
     {
-        model.load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+        // model->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+        model->load_param("romfs:/config/fastestdet.json");
         printf("romfs Init Successful!\n");
     }
 
@@ -196,7 +205,7 @@ int main(int argc, char** argv)
                 printf("\nInference testing\n");
 
                 double start = get_current_time();
-                model.inference_test();
+                model->inference_test();
                 double end = get_current_time();
 
                 double time = end - start;
@@ -218,14 +227,13 @@ int main(int argc, char** argv)
 
                     printf("\nDetecting\n");
                     double start = get_current_time();
-                    bboxes = model.detect(image);
+                    bboxes = model->detect(image);
                     double end = get_current_time();
 
                     double time = end - start;
                     printf("Time: %7.2f\n", time);
                 }
-                model.draw_boxxes(image_output, bboxes);
-                // draw_bboxes(image_output, bboxes, drawing_coor, scale);
+                model->draw_boxxes(image_output, bboxes);
 
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 gfxFlushBuffers();
@@ -244,6 +252,7 @@ int main(int argc, char** argv)
     }
 
     // Stop camera, release allocated memory
+    delete model;
     CAMU_StopCapture(PORT_CAM1);
 
     // Close camera event handles

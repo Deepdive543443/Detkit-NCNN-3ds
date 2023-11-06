@@ -34,9 +34,9 @@ typedef struct BoxInfo
     int label;
 } BoxInfo;
 
-inline float fast_exp(float x);
-inline float fast_sigmoid(float x);
-inline float fast_tanh(float x);
+float fast_exp(float x);
+float fast_sigmoid(float x);
+float fast_tanh(float x);
 int activation_function_softmax(const float *src, float *dst, int length);
 
 class Detector

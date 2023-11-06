@@ -1,0 +1,22 @@
+{
+    "name": "FastestDet",
+    "bin": "romfs:/models/FastestDet.bin",
+    "param": "romfs:/models/FastestDet.param",
+
+    "config":
+    {
+        "input_shape": [352, 352],
+        "num_classes": 80,
+
+        "mean_vals": [0.0, 0.0, 0.0],
+        "norm_vals": [0.00392157, 0.00392157, 0.00392157]        
+    },
+
+    "ncnn":
+    {
+        "num_threats": 1,
+        "winograd_convolution": true,
+        "sgemm_convolution": true,
+        "int8_inference": true
+    }
+}

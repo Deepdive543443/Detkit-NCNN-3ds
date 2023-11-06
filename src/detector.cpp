@@ -1,6 +1,6 @@
 #include "detector.h"
 
-inline float fast_exp(float x)
+float fast_exp(float x)
 {
     union {
         uint32_t i;
@@ -10,12 +10,12 @@ inline float fast_exp(float x)
     return v.f;
 }
 
-inline float fast_sigmoid(float x)
+float fast_sigmoid(float x)
 {
     return 1.0f / (1.0f + fast_exp(-x));
 }
 
-inline float fast_tanh(float x)
+float fast_tanh(float x)
 {
     return 2.f / (1.f + fast_exp(-2 * x)) - 1.f;
 }

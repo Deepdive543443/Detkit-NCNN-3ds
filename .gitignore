@@ -13,3 +13,6 @@ build/vision.o
 .vscode/settings.json
 build/detector.o
 build/detector.d
+src/main.cpp
+build/fastestdet.d
+build/fastestdet.o

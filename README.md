@@ -1,6 +1,6 @@
 # Detkit-NCNN-3DS
 ![IMG_20231020_145410](https://github.com/Deepdive543443/Nanodet-plus-3ds/assets/83911295/259dfb26-80d7-4e4e-903b-79fdfccb83e3)
-This project aims to make more lightweight object detection models run Nintendo 3DS, powered by NCNN. 
+This project aims to make more lightweight object detection models run on Nintendo 3DS, powered by NCNN. 
 
 This project has been renamed from Nanodet Plus 3DS to Detkit NCNN 3DS because I'm trying to add more light-weight object detection models into this app.
 You can still find older version in [Release](https://github.com/Deepdive543443/Detkit-NCNN-3ds/releases) page.

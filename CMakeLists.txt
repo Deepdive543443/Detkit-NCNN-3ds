@@ -13,7 +13,7 @@ include(Tools3DS) # Include all the macros and tools needed for 3ds development.
 find_package(CTRULIB REQUIRED) # Look for ctrulib
 
 # Create executable 
-file(GLOB SOURCES src/*.cpp src/*.h)
+file(GLOB SOURCES src/*)
 add_executable(Detkit_NCNN ${SOURCES}) # Create the elf file
 target_include_directories(Detkit_NCNN PRIVATE src)
 

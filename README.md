@@ -11,6 +11,8 @@ This project now includes:
 - Nanodet-Plus(int8)
 - Fastest Det
 
+Thanks for the [3DS-cmake](https://github.com/Lectem/3ds-cmake), you can now use CMake to build this project. Or use the toolchain files to build your libraries for 3DS. 
+
 
 
 

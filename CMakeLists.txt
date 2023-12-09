@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(Detkit_NCNN)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${DKA_SUGGESTED_C_FLAGS}") # Use the devkitArm suggested flags. This is not mandatory.
 set(APP_TITLE Detkit_3DS)
 set(APP_DESCRIPTION "Light_weight object detection toolkits powered by NCNN")
 set(APP_AUTHOR Deepdive543443)

@@ -24,7 +24,17 @@ Required Homebrew launcher or a title manager like FBI to install or boot.
 
 ## Build
 This project has dependencies on NCNN and RapidJSON.
-Read the build guide from [last project](https://github.com/Deepdive543443/Benchncnn-3DS/tree/main) 
+Follow the build guide from [last project](https://github.com/Deepdive543443/Benchncnn-3DS/tree/main) to install the 3DS development toolchain.
+Then build this project using Makefile
+```
+make -j4
+```
+Or CMake (Recommended if you want to link your library)
+```
+mkdir build && cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=cmake/DevkitArm3DS.cmake ..
+make -j4
+```
 
 
 ## Issues

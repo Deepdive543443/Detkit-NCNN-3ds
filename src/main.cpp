@@ -133,11 +133,6 @@ int main(int argc, char** argv)
             captureInterrupted = false;
         }
 
-        // Again we only tried to use one of them
-
-        // if (camReceiveEvent[3] == 0) {
-		// 	CAMU_SetReceiving(&camReceiveEvent[3], buf + SCREEN_SIZE, PORT_CAM2, SCREEN_SIZE, (s16)bufSize);
-		// }
         svcWaitSynchronizationN(&index, camReceiveEvent, 2, false, WAIT_TIMEOUT);
         switch (index)
         {

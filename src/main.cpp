@@ -65,17 +65,13 @@ int main(int argc, char** argv)
     }
 
     camInit();
-    CAMU_SetSize(SELECT_OUT1_OUT2, SIZE_CTR_TOP_LCD, CONTEXT_A);
-    
-    CAMU_SetOutputFormat(SELECT_OUT1_OUT2, OUTPUT_RGB_565, CONTEXT_A);
-    CAMU_SetFrameRate(SELECT_OUT1_OUT2, FRAME_RATE_30);
-
-    CAMU_SetNoiseFilter(SELECT_OUT1_OUT2, true);
-    CAMU_SetAutoExposure(SELECT_OUT1_OUT2, true);
-    CAMU_SetAutoWhiteBalance(SELECT_OUT1_OUT2, true);
-
+    CAMU_SetSize(SELECT_OUT1, SIZE_CTR_TOP_LCD, CONTEXT_A);
+    CAMU_SetOutputFormat(SELECT_OUT1, OUTPUT_RGB_565, CONTEXT_A);
+    CAMU_SetFrameRate(SELECT_OUT1, FRAME_RATE_30);
+    CAMU_SetNoiseFilter(SELECT_OUT1, true);
+    CAMU_SetAutoExposure(SELECT_OUT1, true);
+    CAMU_SetAutoWhiteBalance(SELECT_OUT1, true);
     CAMU_SetTrimming(PORT_CAM1, false);
-    // CAMU_SetTrimming(PORT_CAM2, false); // I don't think we need second camera here
 
     void *buf = malloc(SCREEN_SIZE_TOP * 2);
     if(!buf)
@@ -89,19 +85,13 @@ int main(int argc, char** argv)
     // CAMU_SetTransferBytes(PORT_BOTH, bufSize, WIDTH_TOP, HEIGHT_TOP);
 
     CAMU_Activate(SELECT_OUT1);
-    // CAMU_Activate(SELECT_OUT1_OUT2);
 
     Handle camReceiveEvent[2] = {0};
     bool captureInterrupted = false;
     s32 index = 0;
 
-    // We only need one camera to be functional
     CAMU_GetBufferErrorInterruptEvent(&camReceiveEvent[0], PORT_CAM1);
-    // CAMU_GetBufferErrorInterruptEvent(&camReceiveEvent[1], PORT_CAM2);
-
     CAMU_ClearBuffer(PORT_CAM1);
-    // CAMU_SynchronizeVsyncTiming(SELECT_OUT1, SELECT_OUT2);
-
     CAMU_StartCapture(PORT_CAM1);
     CAMU_PlayShutterSound(SHUTTER_SOUND_TYPE_MOVIE);
 
@@ -134,13 +124,11 @@ int main(int argc, char** argv)
     {
         if (camReceiveEvent[1] == 0) 
         {
-            // printf("CAMU_SetReceiving: 0x%08X\n", (unsigned int) CAMU_SetReceiving(&camReceiveEvent[2], buf, PORT_CAM1, SCREEN_SIZE, (s16)bufSize));
             CAMU_SetReceiving(&camReceiveEvent[1], buf, PORT_CAM1, SCREEN_SIZE_TOP * 2, (s16)bufSize);
-		}
+        }
 
         if (captureInterrupted) 
         {
-            // printf("CAMU_StartCapture: 0x%08X\n", (unsigned int) CAMU_StartCapture(PORT_BOTH));
             CAMU_StartCapture(PORT_CAM1);
             captureInterrupted = false;
         }
@@ -200,26 +188,26 @@ int main(int argc, char** argv)
             {
                 switch (model_ptr)
                 {
-                case 0:
-                    delete nanodet;
+                    case 0:
+                        delete nanodet;
 
-                    fastestDet = new FastestDet();
-                    fastestDet->load_param("romfs:/config/fastestdet.json");
-                    model_ptr = 1;
-                    printf("\nLoad Fastest Det successful\nPress L to switch to Nanodet\n");
-                    break;
+                        fastestDet = new FastestDet();
+                        fastestDet->load_param("romfs:/config/fastestdet.json");
+                        model_ptr = 1;
+                        printf("\nLoad Fastest Det successful\nPress L to switch to Nanodet\n");
+                        break;
 
-                case 1:
-                    delete fastestDet;
+                    case 1:
+                        delete fastestDet;
 
-                    nanodet = new Nanodet();
-                    nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
-                    model_ptr = 0;
-                    printf("Load Nanodet successful\nPress L to switch to FastestDet\n");
-                    break;
-                
-                default:
-                    break;
+                        nanodet = new Nanodet();
+                        nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+                        model_ptr = 0;
+                        printf("Load Nanodet successful\nPress L to switch to FastestDet\n");
+                        break;
+                    
+                    default:
+                        break;
                 }
             }
             
@@ -230,16 +218,16 @@ int main(int argc, char** argv)
                 double start = get_current_time();
                 switch (model_ptr)
                 {
-                case 0:
-                    nanodet->inference_test();
-                    break;
+                    case 0:
+                        nanodet->inference_test();
+                        break;
 
-                case 1:
-                    fastestDet->inference_test();
-                    break;
-                
-                default:
-                    break;
+                    case 1:
+                        fastestDet->inference_test();
+                        break;
+                    
+                    default:
+                        break;
                 }
                 double end = get_current_time();
                 double time = end - start;

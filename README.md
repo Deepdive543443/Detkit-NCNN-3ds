@@ -3,7 +3,7 @@
 
 
 ## Intro
-This project provides a 3DS Homebrew that enable Light-weight object detection on Nintendo 3DS.
+Detkit3DS is a 3DS Homebrew that enable Light-weight object detection on Nintendo 3DS.
 It's still under development to integrate with more light-weight object detection networks, and better HCI experience
 
 

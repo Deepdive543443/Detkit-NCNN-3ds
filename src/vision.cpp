@@ -132,17 +132,25 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v
         w *= x_scaler;
         h *= y_scaler;
 
-        uint8_t *rgba = (uint8_t *) malloc(4);
-        
-        rgba[0] = color_list[bbox.label][0];
-        rgba[1] = color_list[bbox.label][1];
-        rgba[2] = color_list[bbox.label][2];
-        rgba[3] = 255;
+        union
+        {
+            struct 
+            {
+                uint8_t r;
+                uint8_t g;
+                uint8_t b;
+                uint8_t a;
+            };
+            int rgba;
+        } color;
 
+        color.r = color_list[bbox.label][0];
+        color.g = color_list[bbox.label][1];
+        color.b = color_list[bbox.label][2];
+        color.a = 255;
+        
         printf("% 12s %02.3f % ", class_names[bbox.label], bbox.score);
         printf("% 4d % 4d % 4d % 4d\n",(int) x1, (int) y1, (int) w, (int) h);
-
-        int *color = (int *) rgba;
 
         ncnn::draw_rectangle_c3(
             image.data,
@@ -152,7 +160,7 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v
             (int) y1,
             (int) w,
             (int) h,
-            color[0], 
+            color.rgba, 
             2
         );
 
@@ -163,11 +171,9 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v
             class_names[bbox.label],
             (int) x1 + 1, 
             (int) y1 + 1,
-            7, 
-            color[0]
+            7,
+            color.rgba
         );
-
-        free(rgba);
     }
     printf("=======================================\n");
 }

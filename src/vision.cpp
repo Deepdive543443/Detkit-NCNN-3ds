@@ -114,9 +114,11 @@ void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int dst_w, int draw_coor)
 
 void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v_shift, float x_scaler, float y_scaler)
 {
-    printf("=======================================\n");
-    printf("% 12s % 2s % ", "Label", "Score");
-    printf("% 4s % 4s % 4s % 4s\n\n","x1", "y1", "x2", "y2");
+    const char line[] = "=======================================\n";
+    fprintf(stderr, line);
+    fprintf(stderr, "% 12s % 2s % ", "Label", "Score");
+    fprintf(stderr, "% 4s % 4s % 4s % 4s\n\n","x1", "y1", "x2", "y2");
+
     for (size_t i = 0; i < bboxes.size(); i++)
     {
         const BoxInfo& bbox = bboxes[i];
@@ -149,8 +151,8 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v
         color.b = color_list[bbox.label][2];
         color.a = 255;
         
-        printf("% 12s %02.3f % ", class_names[bbox.label], bbox.score);
-        printf("% 4d % 4d % 4d % 4d\n",(int) x1, (int) y1, (int) w, (int) h);
+        fprintf(stderr, "% 12s %02.3f % ", class_names[bbox.label], bbox.score);
+        fprintf(stderr, "% 4d % 4d % 4d % 4d\n",(int) x1, (int) y1, (int) w, (int) h);
 
         ncnn::draw_rectangle_c3(
             image.data,
@@ -175,5 +177,5 @@ void draw_bboxes(const cv::Mat& image, const std::vector<BoxInfo>& bboxes, int v
             (int) color.rgba
         );
     }
-    printf("=======================================\n");
+    fprintf(stderr, line);
 }

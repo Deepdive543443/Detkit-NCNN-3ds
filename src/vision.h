@@ -5,12 +5,6 @@
 #include "nanodet.h"
 #include "simpleocv.h"
 
-struct object_rect {
-    int x;
-    int y;
-    int width;
-    int height;
-};
 
 const int color_list[80][3] =
 {

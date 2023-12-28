@@ -34,7 +34,7 @@ make -j4
 Makefile is recommended because it has better support on other toolkit from devkitARM such as Makerom.
 
 ## Issues and limitation
-Nintendo 3DS only has 64mb and single ARM11 core available for Homebrew and games to use, which brings some challanges on parallel computing and memory management.
+Nintendo 3DS only has 64mb RAM and single ARM11 core available for Homebrew and games to use, which brings some challanges on parallel computing and memory management.
 CMake support was added but it's not compatible with some of the tools such as Makerom(CIA builder). We are still looking for proper solutions for issues above.
 
 

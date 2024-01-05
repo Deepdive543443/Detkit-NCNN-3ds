@@ -65,7 +65,7 @@ LIBS	:= -lctru -lm
 #---------------------------------------------------------------------------------
 
 # ----------------ncnn--------------------
-NCNN_DIR 			:= ../../cpp_libs/ncnn_3ds# <-Switch to your own path to build yours
+NCNN_DIR 			:= ../../cpp_libs/ncnn_3ds_20240102# <-Switch to your own path to build yours
 NCNN_INCLUDE_DIR 	:= ../$(NCNN_DIR)/include/ncnn
 LIBS += -lncnn
 
@@ -246,3 +246,11 @@ $(OUTPUT).elf	:	$(OFILES)
 
 #---------------------------------------------------------------------------------------
 endif
+
+debug:
+	@echo $(ADD_COMPILE_COMMAND)
+	@echo $(LD)
+	@echo $(LDFLAGS)
+	@echo $(SILENTCMD)
+	@echo $(NM)
+	@echo $(CXX)

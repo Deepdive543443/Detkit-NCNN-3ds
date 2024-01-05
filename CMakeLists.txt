@@ -20,7 +20,7 @@ target_include_directories(Detkit_NCNN PRIVATE src)
 target_link_libraries(Detkit_NCNN 3ds::ctrulib) # Link ctrulib, this will also setup the include directories !
 target_include_directories(Detkit_NCNN PRIVATE ../../cpp_libs/rapidjson-1.1.0/include) # Link RapidJSON
 
-set(ncnn_DIR ../../cpp_libs/ncnn_3ds/lib/cmake/ncnn) # Link ncnn
+set(ncnn_DIR ../../cpp_libs/ncnn_3ds_20240102/lib/cmake/ncnn) # Link ncnn
 find_package(ncnn REQUIRED)
 target_link_libraries(Detkit_NCNN ncnn)
 

@@ -34,7 +34,7 @@ typedef struct BoxInfo
     int label;
 } BoxInfo;
 
-float fast_exp(float x);
+inline float fast_exp(float x);
 float fast_sigmoid(float x);
 float fast_tanh(float x);
 int activation_function_softmax(const float *src, float *dst, int length);
@@ -53,9 +53,9 @@ class Detector
 
         
 
-        virtual int create(const char* param, const char* bin, const ncnn::Option &opt);
-        virtual void inference_test();
-        virtual void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
+        int create(const char* param, const char* bin, const ncnn::Option &opt);
+        void inference_test();
+        void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
 };
 
 #endif // DETECTOR_H

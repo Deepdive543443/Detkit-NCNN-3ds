@@ -1,6 +1,6 @@
 #include "detector.h"
 
-float fast_exp(float x)
+inline float fast_exp(float x)
 {
     union {
         uint32_t i;

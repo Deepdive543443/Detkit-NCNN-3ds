@@ -52,8 +52,8 @@ SET(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available" )
 
 add_definitions(-DARM11 -D__3DS__)
 
-set(ARCH "-march=armv6k -mtune=mpcore -mfloat-abi=hard  -mtp=soft ")
-set(CMAKE_C_FLAGS " -g -Wall -O2 -ffunction-sections -mword-relocations ${ARCH}" CACHE STRING "C flags")
+set(ARCH "-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft")
+set(CMAKE_C_FLAGS "-g -Wall -O2 -ffunction-sections -mword-relocations ${ARCH}" CACHE STRING "C flags")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-rtti -fno-exceptions -std=gnu++11" CACHE STRING "C++ flags")
 
 

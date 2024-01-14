@@ -89,14 +89,6 @@ void Nanodet::load_param(const char* json_file)
     input_size[0] = doc["config"]["input_shape"][0].GetInt();
     input_size[1] = doc["config"]["input_shape"][1].GetInt();
 
-    for (auto &stride: doc["config"]["stride"].GetArray())
-    {
-        strides.push_back(stride.GetInt());
-    }
-
-    num_class = doc["config"]["num_classes"].GetInt();;
-    reg_max = doc["config"]["reg_max"].GetInt();
-
     for (int i = 0; i < 3; i++)
     {
         mean_vals[i] = doc["config"]["mean_vals"][i].GetFloat();
@@ -117,7 +109,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
 {
     std::vector<BoxInfo> proposals;
     {
-        ncnn::Mat input = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_RGB2BGR, ocv_input.cols, ocv_input.rows, 320, 192);
+        ncnn::Mat input = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_BGR, ocv_input.cols, ocv_input.rows, input_size[0], input_size[1]);
         
         // Preprocessing
         input.substract_mean_normalize(mean_vals, norm_vals);
@@ -179,6 +171,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
 
 void Nanodet::draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes)
 {
-    float scale = (float) input.cols / input_size[0];
-    draw_bboxes(input, boxxes, 0, scale, scale);
+    float x_scale = (float) input.cols / input_size[0];
+    float y_scale = (float) input.rows / input_size[1];
+    draw_bboxes(input, boxxes, 0, x_scale, y_scale);
 }

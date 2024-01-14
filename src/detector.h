@@ -10,20 +10,6 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/filereadstream.h"
 
-typedef struct HeadInfo
-{
-    std::string cls_layer;
-    std::string dis_layer;
-    int stride;
-} HeadInfo;
-
-struct CenterPrior
-{
-    int x;
-    int y;
-    int stride;
-};
-
 typedef struct BoxInfo
 {
     float x1;
@@ -44,14 +30,8 @@ class Detector
    public:
         ncnn::Net detector;
         int input_size[2];
-        int num_class;
-        int reg_max;
-        std::vector<int> strides;
         float mean_vals[3];
-        float norm_vals[3];
-        std::vector<CenterPrior> center_priors;
-
-        
+        float norm_vals[3];        
 
         int create(const char* param, const char* bin, const ncnn::Option &opt);
         void inference_test();

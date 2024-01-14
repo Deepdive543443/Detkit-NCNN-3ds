@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     CAMU_SetAutoWhiteBalance(SELECT_OUT1, true);
     CAMU_SetTrimming(PORT_CAM1, false);
 
-    void *buf = malloc(SCREEN_SIZE_TOP * 2);
+    void *buf = malloc(SCREEN_SIZE_TOP * 2); // RBG565 frame buffer
     if(!buf)
     {
         hang_err("Failed to allocate memory!");
@@ -99,8 +99,9 @@ int main(int argc, char** argv)
     gspWaitForVBlank();
     gfxSwapBuffers();
 
-
+    // Button place holder
     u32 kDown;
+    
     // Rom file system pattern
     Result rc = romfsInit();
     if (rc)

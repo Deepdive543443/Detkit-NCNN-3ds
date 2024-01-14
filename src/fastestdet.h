@@ -9,6 +9,8 @@
 
 class FastestDet : public Detector
 {
+    int num_class;
+
     public:
         void load_param(const char* json_file);
         std::vector<BoxInfo> detect(cv::Mat &ocv_input);

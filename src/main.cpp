@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 
     Nanodet *nanodet = new Nanodet();
     FastestDet *fastestDet = nullptr;
-    nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+    nanodet->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
     int model_ptr = 0;
 
 
@@ -196,7 +196,7 @@ int main(int argc, char** argv)
                         delete fastestDet;
 
                         nanodet = new Nanodet();
-                        nanodet->load_param("romfs:/config/nanodet-plus-m_416-int8.json");
+                        nanodet->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
                         model_ptr = 0;
                         printf("Load Nanodet successful\nPress L to switch to FastestDet\n");
                         break;

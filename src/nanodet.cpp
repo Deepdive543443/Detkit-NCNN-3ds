@@ -205,39 +205,82 @@ void Nanodet::load_param(const char* json_file)
     generate_grid_center_priors(input_size[0], input_size[1], strides, center_priors);
 }
 
-std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input)
+std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
 {
-    std::vector<std::vector<BoxInfo>> results;
-    results.resize(num_class);
-
+    // std::vector<std::vector<BoxInfo>> results;
+    // results.resize(num_class);
+    std::vector<BoxInfo> proposals;
     {
         ncnn::Mat input = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_RGB2BGR, ocv_input.cols, ocv_input.rows, 320, 192);
+        
         // Preprocessing
         input.substract_mean_normalize(mean_vals, norm_vals);
         ncnn::Extractor ex = detector.create_extractor();
-
-        ncnn::Mat resized(input_size[0], input_size[1], 3);
-        bordered_resize(input, resized, input_size[0], 0);
-
-        ex.input("data", resized);
+        ex.input("data", input);
 
         // Prediction
-        ncnn::Mat out;
-        ex.extract("output", out);
-        decode(out, center_priors, 0.4, results);
-    }
-
-    std::vector<BoxInfo> dets;
-    for (int i = 0; i < (int)results.size(); i++)
-    {
-        nms(results[i], 0.5);
-
-        for (auto box : results[i])
+        // std::vector<BoxInfo> proposals;
+        // stride 8
         {
-            dets.push_back(box);
+            ncnn::Mat cls_pred;
+            ncnn::Mat dis_pred;
+            ex.extract("cls8", cls_pred);
+            ex.extract("dis8", dis_pred);
+
+            std::vector<BoxInfo> obj8;
+            generate_proposals(cls_pred, dis_pred, 8, input, prob_threshold, obj8);
+            proposals.insert(proposals.end(), obj8.begin(), obj8.end());
         }
+
+        // stride 16
+        {
+            ncnn::Mat cls_pred;
+            ncnn::Mat dis_pred;
+            ex.extract("cls16", cls_pred);
+            ex.extract("dis16", dis_pred);
+
+            std::vector<BoxInfo> obj16;
+            generate_proposals(cls_pred, dis_pred, 16, input, prob_threshold, obj16);
+            proposals.insert(proposals.end(), obj16.begin(), obj16.end());
+        }
+
+        // stride 32
+        {
+            ncnn::Mat cls_pred;
+            ncnn::Mat dis_pred;
+            ex.extract("cls32", cls_pred);
+            ex.extract("dis32", dis_pred);
+
+            std::vector<BoxInfo> obj32;
+            generate_proposals(cls_pred, dis_pred, 32, input, prob_threshold, obj32);
+            proposals.insert(proposals.end(), obj32.begin(), obj32.end());
+        }
+
+        // stride 64
+        {
+            ncnn::Mat cls_pred;
+            ncnn::Mat dis_pred;
+            ex.extract("cls64", cls_pred);
+            ex.extract("dis64", dis_pred);
+
+            std::vector<BoxInfo> obj64;
+            generate_proposals(cls_pred, dis_pred, 64, input, prob_threshold, obj64);
+            proposals.insert(proposals.end(), obj64.begin(), obj64.end());
+        }
+
     }
-    return dets;
+    nms(proposals, 0.5);
+    // std::vector<BoxInfo> dets;
+    // for (int i = 0; i < (int)results.size(); i++)
+    // {
+    //     nms(results[i], 0.5);
+
+    //     for (auto box : results[i])
+    //     {
+    //         dets.push_back(box);
+    //     }
+    // }
+    return proposals;
 }
 
 void Nanodet::draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes)

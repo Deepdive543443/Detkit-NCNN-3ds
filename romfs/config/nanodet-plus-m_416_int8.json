@@ -1,7 +1,7 @@
 {
     "name": "nanodet",
-    "bin": "romfs:/models/nanodet-plus-m_416-int8.bin",
-    "param": "romfs:/models/nanodet-plus-m_416-int8.param",
+    "bin": "romfs:/models/nanodet-plus-m_416_int8.bin",
+    "param": "romfs:/models/nanodet-plus-m_416_int8.param",
 
     "config":
     {

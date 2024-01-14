@@ -64,13 +64,6 @@ static void generate_proposals(ncnn::Mat& cls_pred, ncnn::Mat& dis_pred, int str
                 float x_center = j * stride;
                 float y_center = i * stride;
 
-                // Object obj;
-                // obj.rect.x = x_center - pred_ltrb[0];
-                // obj.rect.y = y_center - pred_ltrb[1];
-                // obj.rect.width =  pred_ltrb[2] + pred_ltrb[0];
-                // obj.rect.height = pred_ltrb[3] + pred_ltrb[1];
-                // obj.label = max_label;
-                // obj.prob = max_score;
                 BoxInfo obj;
                 obj.x1 = x_center - pred_ltrb[0];
                 obj.y1 = y_center - pred_ltrb[1];
@@ -80,90 +73,6 @@ static void generate_proposals(ncnn::Mat& cls_pred, ncnn::Mat& dis_pred, int str
                 obj.label = max_label;
                 objects.push_back(obj);
             }
-        }
-    }
-}
-
-
-
-static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors)
-{
-    for (int i = 0; i < (int)strides.size(); i++)
-    {
-        int stride = strides[i];
-        int feat_w = ceil((float)input_width / stride);
-        int feat_h = ceil((float)input_height / stride);
-        for (int y = 0; y < feat_h; y++)
-        {
-            for (int x = 0; x < feat_w; x++)
-            {
-                CenterPrior ct;
-                ct.x = x;
-                ct.y = y;
-                ct.stride = stride;
-                center_priors.push_back(ct);
-            }
-        }
-    }
-}
-
-BoxInfo Nanodet::disPred2Bbox(const float *&dfl_det, int label, float score, int x, int y, int stride)
-{
-    float ct_x = x * stride;
-    float ct_y = y * stride;
-
-    std::vector<float> dis_pred;
-    dis_pred.resize(4);
-    for (int i = 0; i < 4; i++)
-    {
-        float dis = 0;
-        float* dis_after_sm = new float[this->reg_max + 1];
-        activation_function_softmax(dfl_det + i * (this->reg_max + 1), dis_after_sm, this->reg_max + 1);
-        for (int j = 0; j < this->reg_max + 1; j++)
-        {
-            dis += j * dis_after_sm[j];
-        }
-        dis *= stride;
-        //std::cout << "dis:" << dis << std::endl;
-        dis_pred[i] = dis;
-        delete[] dis_after_sm;
-    }
-    float xmin = (std::max)(ct_x - dis_pred[0], .0f);
-    float ymin = (std::max)(ct_y - dis_pred[1], .0f);
-    float xmax = (std::min)(ct_x + dis_pred[2], (float)this->input_size[0]);
-    float ymax = (std::min)(ct_y + dis_pred[3], (float)this->input_size[1]);
-
-    return BoxInfo { xmin, ymin, xmax, ymax, score, label };
-}
-
-void Nanodet::decode(ncnn::Mat &output, std::vector<CenterPrior> &center_priors, float threshold, std::vector<std::vector<BoxInfo>> &results)
-{
-    int num_points = center_priors.size();
-    float *score_ptr;
-
-    for (int i = 0; i < num_points; i++)
-    {
-        int ctr_x = center_priors[i].x;
-        int ctr_y = center_priors[i].y;
-        int ctr_stride = center_priors[i].stride;
-
-        score_ptr = output.row(i); // point to the second dim
-        float score = 0;
-        int cur_label = 0;
-        for (int label = 0; label < num_class; label++)
-        {
-            if (score_ptr[label] > score)
-            {
-                score = score_ptr[label];
-                cur_label = label;
-            }
-        }
-
-        if (score > threshold)
-        {
-            const float *bbox_pred = output.row(i) + this->num_class; // Point to the last 32 bytes of box predictions
-            BoxInfo boxinfo = disPred2Bbox(bbox_pred, cur_label, score, ctr_x, ctr_y, ctr_stride);
-            results[cur_label].push_back(boxinfo);
         }
     }
 }
@@ -202,13 +111,10 @@ void Nanodet::load_param(const char* json_file)
     opt.use_int8_inference = doc["ncnn"]["int8_inference"].GetBool();
 
     create(doc["param"].GetString(), doc["bin"].GetString(), opt);
-    generate_grid_center_priors(input_size[0], input_size[1], strides, center_priors);
 }
 
 std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
 {
-    // std::vector<std::vector<BoxInfo>> results;
-    // results.resize(num_class);
     std::vector<BoxInfo> proposals;
     {
         ncnn::Mat input = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_RGB2BGR, ocv_input.cols, ocv_input.rows, 320, 192);
@@ -219,7 +125,6 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
         ex.input("data", input);
 
         // Prediction
-        // std::vector<BoxInfo> proposals;
         // stride 8
         {
             ncnn::Mat cls_pred;
@@ -267,19 +172,8 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             generate_proposals(cls_pred, dis_pred, 64, input, prob_threshold, obj64);
             proposals.insert(proposals.end(), obj64.begin(), obj64.end());
         }
-
     }
     nms(proposals, 0.5);
-    // std::vector<BoxInfo> dets;
-    // for (int i = 0; i < (int)results.size(); i++)
-    // {
-    //     nms(results[i], 0.5);
-
-    //     for (auto box : results[i])
-    //     {
-    //         dets.push_back(box);
-    //     }
-    // }
     return proposals;
 }
 

@@ -239,10 +239,6 @@ int main(int argc, char** argv)
                 std::vector<BoxInfo> bboxes;
 
                 {
-                    ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
-                    writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                    // image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
-
                     printf("\nDetecting\n");
                     double start = get_current_time();
                     switch (model_ptr)
@@ -252,7 +248,7 @@ int main(int argc, char** argv)
                             break;
 
                         case 1:
-                            bboxes = fastestDet->detect(image);
+                            bboxes = fastestDet->detect(image_output);
                             break;
                         
                         default:

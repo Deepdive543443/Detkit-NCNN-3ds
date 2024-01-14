@@ -30,12 +30,14 @@ void FastestDet::load_param(const char* json_file)
     create(doc["param"].GetString(), doc["bin"].GetString(), opt);
 }
 
-std::vector<BoxInfo> FastestDet::detect(ncnn::Mat &input)
+std::vector<BoxInfo> FastestDet::detect(cv::Mat &ocv_input)
 {
     ncnn::Mat out;
     {
-        ncnn::Mat resized(input_size[0], input_size[1], 3);
-        ncnn::resize_bilinear(input, resized, input_size[0], input_size[1]);
+        ncnn::Mat resized = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_RGB2BGR, ocv_input.cols, ocv_input.rows, input_size[0], input_size[1]);
+
+        // ncnn::Mat resized(input_size[0], input_size[1], 3);
+        // ncnn::resize_bilinear(input, resized, input_size[0], input_size[1]);
 
         resized.substract_mean_normalize(mean_vals, norm_vals);
         ncnn::Extractor ex = detector.create_extractor();
@@ -80,10 +82,10 @@ std::vector<BoxInfo> FastestDet::detect(ncnn::Mat &input)
                 float y_center = (h + y_offset) / out.h;
 
                 BoxInfo info;
-                info.x1 = (x_center - 0.5 * box_width) * input.w;
-                info.y1 = (y_center - 0.5 * box_height) * input.h;
-                info.x2 = (x_center + 0.5 * box_width) * input.w;
-                info.y2 = (y_center + 0.5 * box_height) * input.h;
+                info.x1 = (x_center - 0.5 * box_width) * ocv_input.cols;
+                info.y1 = (y_center - 0.5 * box_height) * ocv_input.rows;
+                info.x2 = (x_center + 0.5 * box_width) * ocv_input.cols;
+                info.y2 = (y_center + 0.5 * box_height) * ocv_input.rows;
                 info.label = max_cls_idx;
                 info.score = obj_score;
 

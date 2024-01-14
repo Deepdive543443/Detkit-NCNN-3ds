@@ -11,7 +11,7 @@ class FastestDet : public Detector
 {
     public:
         void load_param(const char* json_file);
-        std::vector<BoxInfo> detect(ncnn::Mat &input);
+        std::vector<BoxInfo> detect(cv::Mat &ocv_input);
         void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
 };
 #endif // FASTEST_DET_H

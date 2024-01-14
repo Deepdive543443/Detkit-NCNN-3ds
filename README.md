@@ -9,7 +9,7 @@ It's still under development to integrate with more light-weight object detectio
 
 ## Features 
 This project now support none real-time object detection powered by:
-- Nanodet-Plus(int8) (~11s)
+- Nanodet-Plus(int8) (~6s)
 - Fastest Det (~4s)
 
 ## Download and build

@@ -235,19 +235,20 @@ int main(int argc, char** argv)
                 g_workspace_pool_allocator.clear();
 
                 cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
+                writePictureToMat(image_output, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 std::vector<BoxInfo> bboxes;
 
                 {
                     ncnn::Mat image(WIDTH_TOP, HEIGHT_TOP, 3);
                     writePictureToMat(image, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
-                    image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
+                    // image.to_pixels(image_output.data, ncnn::Mat::PIXEL_BGR);
 
                     printf("\nDetecting\n");
                     double start = get_current_time();
                     switch (model_ptr)
                     {
                         case 0:
-                            bboxes = nanodet->detect(image);
+                            bboxes = nanodet->detect(image_output);
                             break;
 
                         case 1:

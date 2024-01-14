@@ -109,6 +109,7 @@ static const char* class_names[] = { "person", "bicycle", "car", "motorcycle", "
 
 void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 width, u16 height);
 void writePictureToMat(ncnn::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16 height);
+void writePictureToMat(cv::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16 height);
 void writeMatToFrameBuf(ncnn::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 height);
 void bordered_resize(ncnn::Mat &src, ncnn::Mat &dst, int dst_w, int draw_coor);

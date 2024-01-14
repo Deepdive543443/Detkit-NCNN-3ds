@@ -1,5 +1,91 @@
 #include "nanodet.h"
 
+static void generate_proposals(ncnn::Mat& cls_pred, ncnn::Mat& dis_pred, int stride, const ncnn::Mat& in_pad, float prob_threshold, std::vector<BoxInfo>& objects)
+{
+    const int num_grid_x = cls_pred.w;
+    const int num_grid_y = cls_pred.h;
+    const int num_class = cls_pred.c;
+    const int cstep_cls = cls_pred.cstep;
+
+    const int reg_max_1 = dis_pred.w / 4;
+    const int hstep_dis = dis_pred.cstep;
+
+    for (int i = 0; i < num_grid_y; i++)
+    {
+        for (int j = 0; j < num_grid_x; j++)
+        {
+            float *score_ptr = cls_pred.row(i) + j;
+            float max_score = -FLT_MAX;
+            int max_label = -1;
+
+            for (int cls = 0; cls < num_class; cls++)
+            {
+                if (score_ptr[cls * cstep_cls] > max_score)
+                {
+                    max_score = score_ptr[cls * cstep_cls];
+                    max_label = cls;
+                }
+            }
+
+            if (max_score >= prob_threshold)
+            {
+                ncnn::Mat bbox_pred(reg_max_1, 4, (void*) (dis_pred.row(j) + i * hstep_dis));
+                {
+                    ncnn::Layer* softmax = ncnn::create_layer("Softmax");
+
+                    ncnn::ParamDict pd;
+                    pd.set(0, 1); // axis
+                    pd.set(1, 1);
+                    softmax->load_param(pd);
+
+                    ncnn::Option opt;
+                    opt.num_threads = 1;
+                    opt.use_packing_layout = false;
+
+                    softmax->create_pipeline(opt);
+                    softmax->forward_inplace(bbox_pred, opt);
+                    softmax->destroy_pipeline(opt);
+
+                    delete softmax;
+                }
+
+                float pred_ltrb[4];
+                for (int k = 0; k < 4; k++)
+                {
+                    float dis = 0.f;
+                    const float* dis_after_sm = bbox_pred.row(k);
+                    for (int l = 0; l < reg_max_1; l++)
+                    {
+                        dis += l * dis_after_sm[l];
+                    }
+                    pred_ltrb[k] = dis * stride;
+                }
+
+                float x_center = j * stride;
+                float y_center = i * stride;
+
+                // Object obj;
+                // obj.rect.x = x_center - pred_ltrb[0];
+                // obj.rect.y = y_center - pred_ltrb[1];
+                // obj.rect.width =  pred_ltrb[2] + pred_ltrb[0];
+                // obj.rect.height = pred_ltrb[3] + pred_ltrb[1];
+                // obj.label = max_label;
+                // obj.prob = max_score;
+                BoxInfo obj;
+                obj.x1 = x_center - pred_ltrb[0];
+                obj.y1 = y_center - pred_ltrb[1];
+                obj.x2 = x_center + pred_ltrb[2];
+                obj.y2 = y_center + pred_ltrb[3];
+                obj.score = max_score;
+                obj.label = max_label;
+                objects.push_back(obj);
+            }
+        }
+    }
+}
+
+
+
 static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors)
 {
     for (int i = 0; i < (int)strides.size(); i++)
@@ -119,12 +205,13 @@ void Nanodet::load_param(const char* json_file)
     generate_grid_center_priors(input_size[0], input_size[1], strides, center_priors);
 }
 
-std::vector<BoxInfo> Nanodet::detect(ncnn::Mat &input)
+std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input)
 {
     std::vector<std::vector<BoxInfo>> results;
     results.resize(num_class);
 
     {
+        ncnn::Mat input = ncnn::Mat::from_pixels_resize(ocv_input.data, ncnn::Mat::PIXEL_RGB2BGR, ocv_input.cols, ocv_input.rows, 320, 192);
         // Preprocessing
         input.substract_mean_normalize(mean_vals, norm_vals);
         ncnn::Extractor ex = detector.create_extractor();

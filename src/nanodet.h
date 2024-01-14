@@ -5,6 +5,7 @@
 #include "net.h"
 #include "vision.h"
 #include <iostream>
+#include <cfloat>
 
 
 static void generate_grid_center_priors(const int input_height, const int input_width, std::vector<int>& strides, std::vector<CenterPrior>& center_priors);
@@ -15,7 +16,7 @@ class Nanodet : public Detector
     
     public:
         void load_param(const char* json_file);
-        std::vector<BoxInfo> detect(ncnn::Mat &input);
+        std::vector<BoxInfo> detect(cv::Mat &ocv_input);
         void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
 };
 #endif // NANODET_H

@@ -27,7 +27,11 @@ int activation_function_softmax(const float *src, float *dst, int length);
 
 class Detector
 {
-   public:
+    public:
+
+        Detector();
+        virtual ~Detector();
+
         ncnn::Net detector;
         int input_size[2];
         float mean_vals[3];
@@ -35,11 +39,13 @@ class Detector
 
         void inference_test();
         int create(const char* param, const char* bin, const ncnn::Option &opt);
+        void clear();
         void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
 
         virtual void load_param(const char* json_file);
-        virtual std::vector<BoxInfo> detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold);
+        virtual std::vector<BoxInfo> detect(cv::Mat &ocv_input);
         virtual void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
+
 
 };
 

@@ -38,6 +38,14 @@ int activation_function_softmax(const float *src, float *dst, int length)
     return 0;
 }
 
+Detector::Detector()
+{
+}
+
+Detector::~Detector()
+{
+}
+
 int Detector::create(const char* param, const char* bin, const ncnn::Option &opt)
 {
     int err_handler = 0;
@@ -81,6 +89,11 @@ void Detector::inference_test()
     printf("=======================\n");
 }
 
+void Detector::clear()
+{
+    detector.clear();
+}
+
 void Detector::nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH)
 {
     std::sort(input_boxes.begin(), input_boxes.end(), [](BoxInfo a, BoxInfo b) { return a.score > b.score; });
@@ -119,7 +132,7 @@ void Detector::load_param(const char* json_file)
     return;
 }
 
-std::vector<BoxInfo> Detector::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
+std::vector<BoxInfo> Detector::detect(cv::Mat &ocv_input)
 {
     std::vector<BoxInfo> blank_info;
     return blank_info;

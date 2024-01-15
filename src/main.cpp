@@ -112,15 +112,14 @@ int main(int argc, char** argv)
         printf("romfs Init Successful!\n");
     }
 
-    Nanodet *nanodet = new Nanodet();
-    FastestDet *fastestDet = nullptr;
-    nanodet->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
-    int model_ptr = 0;
-
+    Nanodet nanodet;
+    FastestDet fastestDet;
+    
+    Detector *dtr_ptr = &nanodet;
+    dtr_ptr->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
+    int model_idx = 0;
 
     printf("Hello Nano\nPress R to detect\nPress L to switch to FastestDet\n");
-    
-    
     while (aptMainLoop())
     {
         if (camReceiveEvent[1] == 0) 
@@ -182,24 +181,22 @@ int main(int argc, char** argv)
 
             if (kDown & KEY_L)
             {
-                switch (model_ptr)
+                dtr_ptr->clear();
+                switch (model_idx)
                 {
                     case 0:
-                        delete nanodet;
+                        dtr_ptr = &fastestDet;
+                        dtr_ptr->load_param("romfs:/config/fastestdet.json");
+                        model_idx = 1;
 
-                        fastestDet = new FastestDet();
-                        fastestDet->load_param("romfs:/config/fastestdet.json");
-                        model_ptr = 1;
                         printf("\nLoad Fastest Det successful\nPress L to switch to Nanodet\n");
                         break;
 
                     case 1:
-                        delete fastestDet;
-
-                        nanodet = new Nanodet();
-                        nanodet->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
-                        model_ptr = 0;
-                        printf("Load Nanodet successful\nPress L to switch to FastestDet\n");
+                        dtr_ptr = &nanodet;
+                        dtr_ptr->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
+                        model_idx = 0;
+                        printf("\nLoad Nanodet successful\nPress L to switch to FastestDet\n");
                         break;
                     
                     default:
@@ -210,21 +207,8 @@ int main(int argc, char** argv)
             if (kDown & KEY_X)
             {
                 printf("\nInference testing\n");
-
                 double start = get_current_time();
-                switch (model_ptr)
-                {
-                    case 0:
-                        nanodet->inference_test();
-                        break;
-
-                    case 1:
-                        fastestDet->inference_test();
-                        break;
-                    
-                    default:
-                        break;
-                }
+                dtr_ptr->inference_test();
                 double end = get_current_time();
                 double time = end - start;
                 printf("Time: %7.2f\n", time);
@@ -235,44 +219,20 @@ int main(int argc, char** argv)
                 g_blob_pool_allocator.clear();
                 g_workspace_pool_allocator.clear();
 
-                cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP,  3);
+                cv::Mat image_output(HEIGHT_TOP, WIDTH_TOP, 3);
                 writePictureToMat(image_output, buf, 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 std::vector<BoxInfo> bboxes;
 
                 {
                     printf("\nDetecting\n");
                     double start = get_current_time();
-                    switch (model_ptr)
-                    {
-                        case 0:
-                            bboxes = nanodet->detect(image_output);
-                            break;
-
-                        case 1:
-                            bboxes = fastestDet->detect(image_output);
-                            break;
-                        
-                        default:
-                            break;
-                    }
+                    bboxes = dtr_ptr->detect(image_output);
                     double end = get_current_time();
-
                     double time = end - start;
                     printf("Time: %7.2f\n", time);
                 }
-                switch (model_ptr)
-                {
-                    case 0:
-                        nanodet->draw_boxxes(image_output, bboxes);
-                        break;
 
-                    case 1:
-                        fastestDet->draw_boxxes(image_output, bboxes);
-                        break;
-                    
-                    default:
-                        break;
-                }
+                dtr_ptr->draw_boxxes(image_output, bboxes);
                 writeMatToFrameBuf(image_output, gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL), 0, 0, WIDTH_TOP, HEIGHT_TOP);
                 gfxFlushBuffers();
                 gspWaitForVBlank();
@@ -290,19 +250,7 @@ int main(int argc, char** argv)
     }
 
     // Stop camera, release allocated memory
-    switch (model_ptr)
-    {
-        case 0:
-            delete nanodet;
-            break;
-
-        case 1:
-            delete fastestDet;
-            break;
-        
-        default:
-            break;
-    }
+    dtr_ptr->clear();
     CAMU_StopCapture(PORT_CAM1);
 
     // Close camera event handles

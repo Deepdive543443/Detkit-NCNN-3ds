@@ -105,7 +105,7 @@ void Nanodet::load_param(const char* json_file)
     create(doc["param"].GetString(), doc["bin"].GetString(), opt);
 }
 
-std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
+std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input)
 {
     std::vector<BoxInfo> proposals;
     {
@@ -125,7 +125,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             ex.extract("dis8", dis_pred);
 
             std::vector<BoxInfo> obj8;
-            generate_proposals(cls_pred, dis_pred, 8, input, prob_threshold, obj8);
+            generate_proposals(cls_pred, dis_pred, 8, input, 0.4, obj8);
             proposals.insert(proposals.end(), obj8.begin(), obj8.end());
         }
 
@@ -137,7 +137,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             ex.extract("dis16", dis_pred);
 
             std::vector<BoxInfo> obj16;
-            generate_proposals(cls_pred, dis_pred, 16, input, prob_threshold, obj16);
+            generate_proposals(cls_pred, dis_pred, 16, input, 0.4, obj16);
             proposals.insert(proposals.end(), obj16.begin(), obj16.end());
         }
 
@@ -149,7 +149,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             ex.extract("dis32", dis_pred);
 
             std::vector<BoxInfo> obj32;
-            generate_proposals(cls_pred, dis_pred, 32, input, prob_threshold, obj32);
+            generate_proposals(cls_pred, dis_pred, 32, input, 0.4, obj32);
             proposals.insert(proposals.end(), obj32.begin(), obj32.end());
         }
 
@@ -161,11 +161,11 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             ex.extract("dis64", dis_pred);
 
             std::vector<BoxInfo> obj64;
-            generate_proposals(cls_pred, dis_pred, 64, input, prob_threshold, obj64);
+            generate_proposals(cls_pred, dis_pred, 64, input, 0.4, obj64);
             proposals.insert(proposals.end(), obj64.begin(), obj64.end());
         }
     }
-    nms(proposals, nms_threshold);
+    nms(proposals, 0.5);
     return proposals;
 }
 

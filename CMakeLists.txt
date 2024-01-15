@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(Detkit_NCNN)
+project(Detkit-NCNN-3ds.elf)
 
 set(APP_TITLE Detkit_3DS)
 set(APP_DESCRIPTION "Light_weight object detection toolkits powered by NCNN")
@@ -14,17 +14,17 @@ find_package(CTRULIB REQUIRED) # Look for ctrulib
 
 # Create executable 
 file(GLOB SOURCES src/*)
-add_executable(Detkit_NCNN ${SOURCES}) # Create the elf file
-target_include_directories(Detkit_NCNN PRIVATE src)
+add_executable(Detkit-NCNN-3ds.elf ${SOURCES}) # Create the elf file
+target_include_directories(Detkit-NCNN-3ds.elf PRIVATE src)
 
-target_link_libraries(Detkit_NCNN 3ds::ctrulib) # Link ctrulib, this will also setup the include directories !
-target_include_directories(Detkit_NCNN PRIVATE ../../cpp_libs/rapidjson-1.1.0/include) # Link RapidJSON
+target_link_libraries(Detkit-NCNN-3ds.elf 3ds::ctrulib) # Link ctrulib, this will also setup the include directories !
+target_include_directories(Detkit-NCNN-3ds.elf PRIVATE ../../cpp_libs/rapidjson-1.1.0/include) # Link RapidJSON
 
 set(ncnn_DIR ../../cpp_libs/ncnn_3ds_20240102/lib/cmake/ncnn) # Link ncnn
 find_package(ncnn REQUIRED)
-target_link_libraries(Detkit_NCNN ncnn)
+target_link_libraries(Detkit-NCNN-3ds.elf ncnn)
 
-add_3dsx_target(Detkit_NCNN 
+add_3dsx_target(Detkit-NCNN-3ds.elf 
     ${APP_TITLE}
     ${APP_DESCRIPTION}
     ${APP_AUTHOR}

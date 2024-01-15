@@ -113,3 +113,18 @@ void Detector::nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH)
         }
     }
 }
+
+void Detector::load_param(const char* json_file)
+{
+    return;
+}
+
+std::vector<BoxInfo> Detector::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
+{
+    std::vector<BoxInfo> blank_info;
+    return blank_info;
+}
+void Detector::draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes)
+{
+    return;
+}

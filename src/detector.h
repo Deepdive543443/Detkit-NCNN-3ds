@@ -31,11 +31,16 @@ class Detector
         ncnn::Net detector;
         int input_size[2];
         float mean_vals[3];
-        float norm_vals[3];        
+        float norm_vals[3];
 
-        int create(const char* param, const char* bin, const ncnn::Option &opt);
         void inference_test();
+        int create(const char* param, const char* bin, const ncnn::Option &opt);
         void nms(std::vector<BoxInfo>& input_boxes, float NMS_THRESH);
+
+        virtual void load_param(const char* json_file);
+        virtual std::vector<BoxInfo> detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold);
+        virtual void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
+
 };
 
 #endif // DETECTOR_H

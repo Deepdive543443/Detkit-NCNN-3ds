@@ -30,7 +30,7 @@ void FastestDet::load_param(const char* json_file)
     create(doc["param"].GetString(), doc["bin"].GetString(), opt);
 }
 
-std::vector<BoxInfo> FastestDet::detect(cv::Mat &ocv_input)
+std::vector<BoxInfo> FastestDet::detect(cv::Mat &ocv_input, float prob_threshold, float nms_threshold)
 {
     ncnn::Mat out;
     {
@@ -69,7 +69,7 @@ std::vector<BoxInfo> FastestDet::detect(cv::Mat &ocv_input)
             }
 
             
-            if (pow(max_cls_score, 0.4) * pow(obj_score, 0.6) > 0.65)
+            if (pow(max_cls_score, 0.4) * pow(obj_score, 0.6) > prob_threshold)
             {
                 float x_offset = fast_tanh(ptr[c_step]);
                 float y_offset = fast_tanh(ptr[c_step * 2]);
@@ -92,7 +92,7 @@ std::vector<BoxInfo> FastestDet::detect(cv::Mat &ocv_input)
         }
     }
     // Debug
-    nms(results, 0.65);
+    nms(results, nms_threshold);
     return results;   
 }
 

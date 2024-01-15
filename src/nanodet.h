@@ -11,8 +11,8 @@ class Nanodet : public Detector
 {
     
     public:
-        void load_param(const char* json_file);
-        std::vector<BoxInfo> detect(cv::Mat &ocv_input, float prob_threshold = 0.4f, float nms_threshold = 0.5f);
-        void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
+        virtual void load_param(const char* json_file);
+        virtual std::vector<BoxInfo> detect(cv::Mat &ocv_input, float prob_threshold = 0.4f, float nms_threshold = 0.5f);
+        virtual void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
 };
 #endif // NANODET_H

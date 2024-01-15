@@ -165,7 +165,7 @@ std::vector<BoxInfo> Nanodet::detect(cv::Mat &ocv_input, float prob_threshold, f
             proposals.insert(proposals.end(), obj64.begin(), obj64.end());
         }
     }
-    nms(proposals, 0.5);
+    nms(proposals, nms_threshold);
     return proposals;
 }
 

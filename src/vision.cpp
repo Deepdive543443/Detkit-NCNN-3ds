@@ -13,9 +13,9 @@ void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 widt
             draw_x = x + i;
             u32 v = (draw_y + draw_x * height) * 3;
             u16 data = img_16[j * width + i];
-            uint8_t b = ((data >> 11) & 0x1F) << 3;
-            uint8_t g = ((data >> 5) & 0x3F) << 2;
-            uint8_t r = (data & 0x1F) << 3;
+            u8 b = ((data >> 11) & 0x1F) << 3;
+            u8 g = ((data >> 5) & 0x3F) << 2;
+            u8 r = (data & 0x1F) << 3;
             fb_8[v] = r;
             fb_8[v+1] = g;
             fb_8[v+2] = b;
@@ -51,7 +51,6 @@ void writePictureToMat(cv::Mat &mat, void *img, u16 x0, u16 y0, u16 width, u16 h
     u16 *img_16 = (u16 *) img;
     unsigned char *mat_ptr = mat.data;
     u16 data;
-
 
     for (int j = y0; j < height; j++)
     {

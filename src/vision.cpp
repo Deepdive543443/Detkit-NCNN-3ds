@@ -9,7 +9,7 @@ void writePictureToFramebufferRGB565(void *fb, void *img, u16 x, u16 y, u16 widt
     {
         for(i = 0; i < width; i++) 
         {
-            draw_y = y + height - j;
+            draw_y = y + height - j - 1;
             draw_x = x + i;
             u32 v = (draw_y + draw_x * height) * 3;
             u16 data = img_16[j * width + i];
@@ -84,7 +84,7 @@ void writeMatToFrameBuf(cv::Mat &mat, void *buf, u16 x, u16 y, u16 width, u16 he
     {
         for(int i = 0; i < width; i++) 
         {
-            draw_y = y + height - j;
+            draw_y = y + height - j - 1;
             draw_x = x + i;
             u32 v = (draw_y + draw_x * height) * 3;
 

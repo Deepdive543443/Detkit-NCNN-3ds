@@ -10,6 +10,12 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/filereadstream.h"
 
+typedef enum
+{
+    NANODET_PLUS,
+    FASTESTDET
+} Detector_idx;
+
 typedef struct BoxInfo
 {
     float x1;
@@ -45,8 +51,7 @@ class Detector
         virtual void load_param(const char* json_file);
         virtual std::vector<BoxInfo> detect(cv::Mat &ocv_input);
         virtual void draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes);
-
-
 };
 
+Detector *create_detector(Detector_idx idx, const char *path);
 #endif // DETECTOR_H

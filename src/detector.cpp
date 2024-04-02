@@ -1,4 +1,6 @@
 #include "detector.h"
+#include "fastestdet.h"
+#include "nanodet.h"
 
 inline float fast_exp(float x)
 {
@@ -140,4 +142,25 @@ std::vector<BoxInfo> Detector::detect(cv::Mat &ocv_input)
 void Detector::draw_boxxes(cv::Mat &input, std::vector<BoxInfo> &boxxes)
 {
     return;
+}
+
+Detector *create_detector(Detector_idx idx, const char *path)
+{
+    Detector *det = nullptr;
+    switch (idx)
+    {
+        case FASTESTDET:
+            det = new FastestDet;
+            break;
+
+        case NANODET_PLUS:
+            det = new Nanodet;
+            break;
+
+        default:
+            break;
+    }
+
+    det->load_param(path);
+    return det;
 }

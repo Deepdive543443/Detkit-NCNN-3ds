@@ -1,14 +1,12 @@
-#include <setjmp.h>
 #include <iostream> 
 #include <chrono> // std
-
+#include <setjmp.h>
 #include "3ds.h" // 3ds devkit 
-
 #include "net.h"
 #include "simpleocv.h" // ncnn
 
-#include "fastestdet.h"
-#include "nanodet.h"// utils
+#include "detector.h"
+#include "vision.h"
 
 #define WAIT_TIMEOUT 1000000000ULL
 #define WIDTH_TOP 400
@@ -19,14 +17,14 @@ static jmp_buf exitJmp;
 static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
 static ncnn::PoolAllocator g_workspace_pool_allocator;
 
-void cleanup() 
+static void cleanup() 
 {
     camExit();
     gfxExit();
     acExit();
 }
 
-void hang_err(const char *message)
+static void hang_err(const char *message)
 {
     printf("%s\nPress START to exit\n", message);
     while (aptMainLoop())
@@ -38,7 +36,7 @@ void hang_err(const char *message)
     }
 }
 
-double get_current_time()
+static double get_current_time()
 {
     auto now = std::chrono::high_resolution_clock::now();
     auto usec = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
@@ -111,13 +109,9 @@ int main(int argc, char** argv)
     {
         printf("romfs Init Successful!\n");
     }
-
-    Nanodet nanodet;
-    FastestDet fastestDet;
     
-    Detector *dtr_ptr = &nanodet;
-    dtr_ptr->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
-    int model_idx = 0;
+    Detector *dtr_ptr = create_detector(NANODET_PLUS, "romfs:/config/nanodet-plus-m_416_int8.json");
+    Detector_idx detector_idx = NANODET_PLUS;
 
     printf("Hello Nano\nPress R to detect\nPress L to switch to FastestDet\n");
     while (aptMainLoop())
@@ -182,20 +176,21 @@ int main(int argc, char** argv)
             if (kDown & KEY_L)
             {
                 dtr_ptr->clear();
-                switch (model_idx)
+                delete dtr_ptr;
+                dtr_ptr = 0;
+
+                switch (detector_idx)
                 {
-                    case 0:
-                        dtr_ptr = &fastestDet;
-                        dtr_ptr->load_param("romfs:/config/fastestdet.json");
-                        model_idx = 1;
+                    case NANODET_PLUS:
+                        dtr_ptr = create_detector(FASTESTDET, "romfs:/config/fastestdet.json");
+                        detector_idx = FASTESTDET;
 
                         printf("\nLoad Fastest Det successful\nPress L to switch to Nanodet\n");
                         break;
 
-                    case 1:
-                        dtr_ptr = &nanodet;
-                        dtr_ptr->load_param("romfs:/config/nanodet-plus-m_416_int8.json");
-                        model_idx = 0;
+                    case FASTESTDET:
+                        dtr_ptr = create_detector(NANODET_PLUS, "romfs:/config/nanodet-plus-m_416_int8.json");
+                        detector_idx = NANODET_PLUS;
                         printf("\nLoad Nanodet successful\nPress L to switch to FastestDet\n");
                         break;
                     

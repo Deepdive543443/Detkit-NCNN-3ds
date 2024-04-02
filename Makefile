@@ -65,7 +65,7 @@ LIBS	:= -lctru -lm
 #---------------------------------------------------------------------------------
 
 # ----------------ncnn--------------------
-NCNN_DIR				:= ../../cpp_libs/ncnn_3ds_20240102# <-Switch to your own path to build yours
+NCNN_DIR				:= ../../cpp_libs/ncnn_master_3ds# <-Switch to your own path to build yours
 NCNN_INCLUDE_DIR		:= ../$(NCNN_DIR)/include/ncnn
 LIBS += -lncnn
 

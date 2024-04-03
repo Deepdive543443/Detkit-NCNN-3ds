@@ -90,12 +90,17 @@ void Nanodet::load_param(const char* json_file)
         norm_vals[i] = doc["config"]["norm_vals"][i].GetFloat();
     }
 
+    blob_pool_allocator.clear();
+    workspace_pool_allocator.clear();
+
     // NCNN opt
     ncnn::Option opt;
     opt.num_threads              = doc["ncnn"]["num_threats"].GetInt();
     opt.use_winograd_convolution = doc["ncnn"]["winograd_convolution"].GetBool();
     opt.use_sgemm_convolution    = doc["ncnn"]["sgemm_convolution"].GetBool();
     opt.use_int8_inference       = doc["ncnn"]["int8_inference"].GetBool();
+    opt.blob_allocator           = &blob_pool_allocator;
+    opt.workspace_allocator      = &workspace_pool_allocator;
 
     create(doc["param"].GetString(), doc["bin"].GetString(), opt);
 }

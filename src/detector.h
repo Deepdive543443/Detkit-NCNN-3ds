@@ -39,6 +39,9 @@ class Detector {
     float     mean_vals[3];
     float     norm_vals[3];
 
+    ncnn::UnlockedPoolAllocator blob_pool_allocator;
+    ncnn::PoolAllocator         workspace_pool_allocator;
+
     void inference_test();
     int  create(const char *param, const char *bin, const ncnn::Option &opt);
     void clear();

@@ -32,7 +32,11 @@ int activation_function_softmax(const float *src, float *dst, int length)
     return 0;
 }
 
-Detector::Detector() {}
+Detector::Detector()
+{
+    blob_pool_allocator.set_size_compare_ratio(0.f);
+    workspace_pool_allocator.set_size_compare_ratio(0.f);
+}
 
 Detector::~Detector() {}
 
